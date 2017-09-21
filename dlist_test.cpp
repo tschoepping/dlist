@@ -344,11 +344,11 @@ void sldlist_test()
   sldlist<uint32_t>::iterator it_c;
   it_c = list_a.back();
 
-  assert(it_a.valid() == nullptr);
+  assert(it_a.valid() == false);
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_a);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(0) == &data_a);
@@ -356,7 +356,7 @@ void sldlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.valid() == &item_c);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(0) == &data_c);
@@ -504,11 +504,11 @@ void slodlist_test()
   slodlist<uint32_t>::iterator it_c;
   it_c = list_a.max();
 
-  assert(it_a.valid() == nullptr);
+  assert(it_a.valid() == false);
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_a);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(0) == &data_a);
@@ -516,7 +516,7 @@ void slodlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.valid() == &item_c);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(0) == &data_c);
@@ -679,11 +679,11 @@ void slcdlist_test()
   slcdlist<uint32_t>::iterator it_c;
   it_c = list_a.eldest();
 
-  assert(it_a.valid() == nullptr);
+  assert(it_a.valid() == false);
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_c);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_c);
   assert(*it_b == data_c);
   assert(it_b.peek(0) == &data_c);
@@ -691,7 +691,7 @@ void slcdlist_test()
   assert(it_b.peek(2) == &data_b);
   assert(it_b.peek(3) == &data_c);
 
-  assert(it_c.valid() == &item_a);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_a);
   assert(*it_c == data_a);
   assert(it_c.peek(0) == &data_a);
@@ -846,7 +846,7 @@ void dldlist_test()
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_a);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(-1) == nullptr);
@@ -855,7 +855,7 @@ void dldlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.valid() == &item_c);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(-3) == nullptr);
@@ -1019,7 +1019,7 @@ void dlodlist_test()
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_a);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(-1) == nullptr);
@@ -1028,7 +1028,7 @@ void dlodlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.valid() == &item_c);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(-3) == nullptr);
@@ -1207,7 +1207,7 @@ void dlcdlist_test()
   assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.valid() == &item_c);
+  assert(it_b.valid() == true);
   assert(it_b.operator->() == &data_c);
   assert(*it_b == data_c);
   assert(it_b.peek(-3) == &data_c);
@@ -1218,7 +1218,7 @@ void dlcdlist_test()
   assert(it_b.peek(2) == &data_b);
   assert(it_b.peek(3) == &data_c);
 
-  assert(it_c.valid() == &item_a);
+  assert(it_c.valid() == true);
   assert(it_c.operator->() == &data_a);
   assert(*it_c == data_a);
   assert(it_c.peek(-3) == &data_a);

@@ -644,9 +644,11 @@ public:
   /**
    * @brief   Checks whether the iterator is pointing to an item.
    *
-   * @return  Constant pointer to the associated item or a nullpointer.
+   * @note    Alternatively the peek() function can be used with argument 0.
+   *
+   * @return  true, if an item is associated to the iterator.
    */
-  const item* valid() const;
+  bool valid() const;
 };
 
 /**
@@ -763,9 +765,11 @@ public:
   /**
    * @brief   Checks whether the iterator is pointing to an item.
    *
-   * @return  Constant pointer to the associated item or a nullpointer.
+   * @note    Alternatively the peek() function can be used with argument 0.
+   *
+   * @return  true, if an item is associated to the iterator.
    */
-  const item* valid() const;
+  bool valid() const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

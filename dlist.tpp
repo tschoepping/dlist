@@ -300,9 +300,9 @@ T* sliterator<T>::peek(const unsigned int n) const
 }
 
 template<typename T>
-inline const typename sliterator<T>::item* sliterator<T>::valid() const
+inline bool sliterator<T>::valid() const
 {
-  return this->m_item;
+  return (this->m_item != nullptr);
 }
 
 // DL_ITERATOR /////////////////////////////////////////////////////////////////
@@ -385,9 +385,9 @@ T* dliterator<T>::peek(const int n) const
 }
 
 template<typename T>
-inline  const typename dliterator<T>::item* dliterator<T>::valid() const
+inline bool dliterator<T>::valid() const
 {
-  return this->m_item;
+  return (this->m_item != nullptr);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
