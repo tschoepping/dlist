@@ -31,85 +31,203 @@ namespace dlist
 // ITEMS                                                                      //
 ////////////////////////////////////////////////////////////////////////////////
 
+// BASE_SLITEM /////////////////////////////////////////////////////////////////
+
+_slitem::_slitem() :
+  m_next(nullptr)
+{}
+
+inline bool _slitem::attached() const
+{
+  return (this->m_next != nullptr);
+}
+
+inline bool _slitem::operator==(const _slitem& i) const
+{
+  return identical(*this, i);
+}
+
+inline bool _slitem::operator!=(const _slitem& i) const
+{
+  return !identical(*this, i);
+}
+
+inline bool _slitem::identical(const _slitem &a, const _slitem &b)
+{
+  return (a.m_next == b.m_next);
+}
+
+// BASE_DLITEM /////////////////////////////////////////////////////////////////
+
+_dlitem::_dlitem() :
+  m_prev(nullptr), m_next(nullptr)
+{}
+
+inline bool _dlitem::attached() const
+{
+  return (this->m_prev != nullptr) || (this->m_next != nullptr);
+}
+
+inline bool _dlitem::operator==(const _dlitem& i) const
+{
+  return identical(*this, i);
+}
+
+inline bool _dlitem::operator!=(const _dlitem& i) const
+{
+  return !identical(*this, i);
+}
+
+inline bool _dlitem::identical(const _dlitem &a, const _dlitem &b)
+{
+  return (a.m_prev == b.m_prev) && (a.m_next == b.m_next);
+}
+
 // _BASE_ITEM //////////////////////////////////////////////////////////////////
 
 template<typename T>
-_base_item<T>::_base_item(T& d) :
-  _data(d)
+_item<T>::_item(T& d) :
+  m_data(d)
 {}
 
 template<typename T>
-inline T& _base_item<T>::operator *()
+inline T& _item<T>::operator*()
 {
-  return _data;
+  return m_data;
 }
 
 template<typename T>
-inline T* _base_item<T>::operator ->()
+inline T* _item<T>::operator->()
 {
-  return &_data;
+  return &m_data;
+}
+
+template<typename T>
+inline bool _item<T>::operator==(const _item& i) const
+{
+  return identical(*this, i);
+}
+
+template<typename T>
+inline bool _item<T>::operator!=(const _item& i) const
+{
+  return !identical(*this, i);
+}
+
+template<typename T>
+inline bool _item<T>::identical(const _item &a, const _item &b)
+{
+  return (&a.m_data == &b.m_data);
 }
 
 // SL_ITEM /////////////////////////////////////////////////////////////////////
 
 template<typename T>
-sl_item<T>::sl_item(T& d) :
-  _base_item<T>(d), _next(nullptr)
+slitem<T>::slitem(T& d) :
+  _slitem(), _item<T>(d)
 {}
 
 template<typename T>
-inline bool sl_item<T>::attached() const
+inline bool slitem<T>::attached() const
 {
-  return (this->_next != nullptr);
+  return _slitem::attached();
 }
 
 template<typename T>
-inline bool sl_item<T>::operator ==(const sl_item& i) const
+inline bool slitem<T>::operator==(const _slitem& i) const
+{
+  return identical(*this, *static_cast<const slitem*>(&i));
+}
+
+template<typename T>
+inline bool slitem<T>::operator==(const _item<T>& i) const
+{
+  return identical(*this, *static_cast<const slitem*>(&i));
+}
+
+template<typename T>
+inline bool slitem<T>::operator==(const slitem& i) const
 {
   return identical(*this, i);
 }
 
 template<typename T>
-inline bool sl_item<T>::operator !=(const sl_item& i) const
+inline bool slitem<T>::operator!=(const _slitem& i) const
+{
+  return !identical(*this, *static_cast<const slitem*>(&i));
+}
+
+template<typename T>
+inline bool slitem<T>::operator!=(const _item<T>& i) const
+{
+  return !identical(*this, *static_cast<const slitem*>(&i));
+}
+
+template<typename T>
+inline bool slitem<T>::operator!=(const slitem& i) const
 {
   return !identical(*this, i);
 }
 
 template<typename T>
-inline bool sl_item<T>::identical(const sl_item &a, const sl_item &b)
+inline bool slitem<T>::identical(const slitem &a, const slitem &b)
 {
-  return (&a._data == &b._data) && (a._next == b._next);
+  return (_slitem::identical(a, b) && _item<T>::identical(a, b));
 }
 
 // DL_ITEM /////////////////////////////////////////////////////////////////////
 
 template<typename T>
-dl_item<T>::dl_item(T& d) :
-  _base_item<T>(d), _prev(nullptr), _next(nullptr)
+dlitem<T>::dlitem(T& d) :
+  _dlitem(), _item<T>(d)
 {}
 
 template<typename T>
-inline bool dl_item<T>::attached() const
+inline bool dlitem<T>::attached() const
 {
-  return (this->_prev != nullptr || this->_next != nullptr);
+  return _dlitem::attached();
 }
 
 template<typename T>
-inline bool dl_item<T>::operator ==(const dl_item& i) const
+inline bool dlitem<T>::operator==(const _dlitem& i) const
+{
+  return identical(*this, *static_cast<const dlitem*>(&i));
+}
+
+template<typename T>
+inline bool dlitem<T>::operator==(const _item<T>& i) const
+{
+  return identical(*this, *static_cast<const dlitem*>(&i));
+}
+
+template<typename T>
+inline bool dlitem<T>::operator==(const dlitem& i) const
 {
   return identical(*this, i);
 }
 
 template<typename T>
-inline bool dl_item<T>::operator !=(const dl_item& i) const
+inline bool dlitem<T>::operator!=(const _dlitem& i) const
+{
+  return !identical(*this, *static_cast<const dlitem*>(&i));
+}
+
+template<typename T>
+inline bool dlitem<T>::operator!=(const _item<T>& i) const
+{
+  return !identical(*this, *static_cast<const dlitem*>(&i));
+}
+
+template<typename T>
+inline bool dlitem<T>::operator!=(const dlitem& i) const
 {
   return !identical(*this, i);
 }
 
 template<typename T>
-inline bool dl_item<T>::identical(const dl_item &a, const dl_item &b)
+inline bool dlitem<T>::identical(const dlitem &a, const dlitem &b)
 {
-  return (&a._data == &b._data) && (a._prev == b._prev) && (a._next == b._next);
+  return (_dlitem::identical(a, b) && _item<T>::identical(a, b));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -119,157 +237,157 @@ inline bool dl_item<T>::identical(const dl_item &a, const dl_item &b)
 // SL_ITERATOR /////////////////////////////////////////////////////////////////
 
 template<typename T>
-sl_iterator<T>::sl_iterator() :
-  _p(nullptr)
+sliterator<T>::sliterator() :
+  m_item(nullptr)
 {}
 
 template<typename T>
-sl_iterator<T>::sl_iterator(const sl_iterator& it) :
-  _p(it._p)
+sliterator<T>::sliterator(const sliterator& it) :
+  m_item(it.m_item)
 {}
 
 template<typename T>
-inline sl_iterator<T>& sl_iterator<T>::operator =(const sl_iterator& it)
+inline sliterator<T>& sliterator<T>::operator=(const sliterator& it)
 {
-  this->_p = it._p;
+  this->m_item = it.m_item;
   return *this;
 }
 
 template<typename T>
-inline bool sl_iterator<T>::operator ==(const sl_iterator& it) const
+inline bool sliterator<T>::operator==(const sliterator& it) const
 {
-  return (this->_p == it._p);
+  return (this->m_item == it.m_item);
 }
 
 template<typename T>
-inline bool sl_iterator<T>::operator !=(const sl_iterator& it) const
+inline bool sliterator<T>::operator!=(const sliterator& it) const
 {
-  return (this->_p != it._p);
+  return (this->m_item != it.m_item);
 }
 
 template<typename T>
-inline sl_iterator<T>& sl_iterator<T>::operator ++()
+inline sliterator<T>& sliterator<T>::operator++()
 {
-  if (this->_p != nullptr) {
-    this->_p = this->_p->_next;
+  if (this->m_item != nullptr) {
+    this->m_item = static_cast<item*>(this->m_item->m_next);
   }
   return *this;
 }
 
 template<typename T>
-inline T& sl_iterator<T>::operator *()
+inline T& sliterator<T>::operator*()
 {
-  return this->_p->_data;
+  return this->m_item->m_data;
 }
 
 template<typename T>
-inline T* sl_iterator<T>::operator ->()
+inline T* sliterator<T>::operator->()
 {
-  return (this->_p != nullptr) ? &(this->_p->_data) : nullptr;
+  return (this->m_item != nullptr) ? &(this->m_item->m_data) : nullptr;
 }
 
 template<typename T>
-T* sl_iterator<T>::peek(const unsigned int n) const
+T* sliterator<T>::peek(const unsigned int n) const
 {
-  item_t* i(this->_p);
+  item* i(this->m_item);
   unsigned int cnt(n);
   // peek forwards
   while (cnt > 0 && i != nullptr) {
-    i = i->_next;
+    i = static_cast<item*>(i->m_next);
     --cnt;
   }
-  return (i != nullptr) ? &(i->_data) : nullptr;
+  return (i != nullptr) ? &(i->m_data) : nullptr;
 }
 
 template<typename T>
-inline const typename sl_iterator<T>::item_t* sl_iterator<T>::item() const
+inline const typename sliterator<T>::item* sliterator<T>::valid() const
 {
-  return this->_p;
+  return this->m_item;
 }
 
 // DL_ITERATOR /////////////////////////////////////////////////////////////////
 
 template<typename T>
-dl_iterator<T>::dl_iterator() :
-  _p(nullptr)
+dliterator<T>::dliterator() :
+  m_item(nullptr)
 {}
 
 template<typename T>
-dl_iterator<T>::dl_iterator(const dl_iterator& it) :
-  _p(it._p)
+dliterator<T>::dliterator(const dliterator& it) :
+  m_item(it.m_item)
 {}
 
 template<typename T>
-inline dl_iterator<T>& dl_iterator<T>::operator =(const dl_iterator& it)
+inline dliterator<T>& dliterator<T>::operator=(const dliterator& it)
 {
-  this->_p = it._p;
+  this->m_item = it.m_item;
   return *this;
 }
 
 template<typename T>
-inline bool dl_iterator<T>::operator ==(const dl_iterator& it) const
+inline bool dliterator<T>::operator==(const dliterator& it) const
 {
-  return (this->_p == it._p);
+  return (this->m_item == it.m_item);
 }
 
 template<typename T>
-inline bool dl_iterator<T>::operator !=(const dl_iterator& it) const
+inline bool dliterator<T>::operator!=(const dliterator& it) const
 {
-  return (this->_p != it._p);
+  return (this->m_item != it.m_item);
 }
 
 template<typename T>
-inline dl_iterator<T>& dl_iterator<T>::operator ++()
+inline dliterator<T>& dliterator<T>::operator++()
 {
-  if (this->_p != nullptr) {
-    this->_p = this->_p->_next;
+  if (this->m_item != nullptr) {
+    this->m_item = static_cast<item*>(this->m_item->m_next);
   }
   return *this;
 }
 
 template<typename T>
-inline dl_iterator<T>& dl_iterator<T>::operator --()
+inline dliterator<T>& dliterator<T>::operator--()
 {
-  if (this->_p != nullptr) {
-    this->_p = this->_p->_prev;
+  if (this->m_item != nullptr) {
+    this->m_item = static_cast<item*>(this->m_item->m_prev);
   }
   return *this;
 }
 
 template<typename T>
-inline T& dl_iterator<T>::operator *()
+inline T& dliterator<T>::operator*()
 {
-  return this->_p->_data;
+  return this->m_item->m_data;
 }
 
 template<typename T>
-inline T* dl_iterator<T>::operator ->()
+inline T* dliterator<T>::operator->()
 {
-  return (this->_p != nullptr) ? &(this->_p->_data) : nullptr;
+  return (this->m_item != nullptr) ? &(this->m_item->m_data) : nullptr;
 }
 
 template<typename T>
-T* dl_iterator<T>::peek(const int n) const
+T* dliterator<T>::peek(const int n) const
 {
-  item_t* i(this->_p);
+  item* i(this->m_item);
   int cnt(n);
   // peek forwards or skip if n <= 0
   while (cnt > 0 && i != nullptr) {
-    i = i->_next;
+    i = static_cast<item*>(i->m_next);
     --cnt;
   }
   // peek backwards or skip if n >= 0
   while (cnt < 0 && i != nullptr) {
-    i = i->_prev;
+    i = static_cast<item*>(i->m_prev);
     ++cnt;
   }
-  return (i != nullptr) ? &(i->_data) : nullptr;
+  return (i != nullptr) ? &(i->m_data) : nullptr;
 }
 
 template<typename T>
-inline  const typename dl_iterator<T>::item_t* dl_iterator<T>::item() const
+inline  const typename dliterator<T>::item* dliterator<T>::valid() const
 {
-  return this->_p;
+  return this->m_item;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -279,21 +397,21 @@ inline  const typename dl_iterator<T>::item_t* dl_iterator<T>::item() const
 // _BASE_DLIST /////////////////////////////////////////////////////////////////
 
 template<linked_t LINKED, property_t PROPERTY, typename T>
-_base_dlist<LINKED, PROPERTY, T>::_base_dlist()
+_dlist<LINKED, PROPERTY, T>::_dlist()
 {}
 
 // _BASE_SLDLIST ///////////////////////////////////////////////////////////////
 
 template<property_t PROPERTY, typename T>
-_base_sldlist<PROPERTY, T>::_base_sldlist() :
-  _base_dlist<SINGLY_LINKED, PROPERTY, T>()
+_sldlist<PROPERTY, T>::_sldlist() :
+  _dlist<SINGLY_LINKED, PROPERTY, T>()
 {}
 
 // _BASE_DLDLIST ///////////////////////////////////////////////////////////////
 
 template<property_t PROPERTY, typename T>
-_base_dldlist<PROPERTY, T>::_base_dldlist() :
-  _base_dlist<DOUBLY_LINKED, PROPERTY, T>()
+_dldlist<PROPERTY, T>::_dldlist() :
+  _dlist<DOUBLY_LINKED, PROPERTY, T>()
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -304,15 +422,15 @@ _base_dldlist<PROPERTY, T>::_base_dldlist() :
 
 template<typename T>
 sldlist<T>::sldlist() :
-  _base_sldlist<NONE, T>(), _first(), _last()
+  _sldlist<NONE, T>(), _first(), _last()
 {}
 
 template<typename T>
 inline bool sldlist<T>::empty() const
 {
-  assert(!((this->_first._p == nullptr) ^ (this->_last._p == nullptr)));
+  assert(!((this->_first.m_item == nullptr) ^ (this->_last.m_item == nullptr)));
 
-  return (this->_first._p == nullptr);
+  return (this->_first.m_item == nullptr);
 }
 
 template<typename T>
@@ -346,7 +464,7 @@ bool sldlist<T>::contains(const T& d) const
     iterator it(this->_first);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
@@ -385,13 +503,13 @@ typename sldlist<T>::item* sldlist<T>::remove(const T& rm)
     iterator last;
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
+      if (&(current.m_item->m_data) == &rm) {
         // the first item matches
         if (current == this->_first) {
           // if the last item will be removed, set all pointers accordingly
           if (this->_first == this->_last) {
-            this->_first._p = nullptr;
-            this->_last._p = nullptr;
+            this->_first.m_item = nullptr;
+            this->_last.m_item = nullptr;
           }
           // increase the _first iterator
           else {
@@ -401,14 +519,14 @@ typename sldlist<T>::item* sldlist<T>::remove(const T& rm)
         // the last item matches
         else if (current == this->_last) {
           this->_last = last;
-          this->_last._p->_next = nullptr;
+          this->_last.m_item->m_next = nullptr;
         }
         // any item inbetween the first and the last item will be removed
         else {
-          last._p->_next = current._p->_next;
+          last.m_item->m_next = current.m_item->m_next;
         }
-        current._p->_next = nullptr;
-        return current._p;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep going as long as the end is not reached yet
       else if (current != this->_last) {
@@ -424,13 +542,13 @@ typename sldlist<T>::item* sldlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool sldlist<T>::operator ==(const sldlist& l) const
+inline bool sldlist<T>::operator==(const sldlist& l) const
 {
   return (this->_first == l._first) && (this->_last == l._last);
 }
 
 template<typename T>
-inline bool sldlist<T>::operator !=(const sldlist& l) const
+inline bool sldlist<T>::operator!=(const sldlist& l) const
 {
   return (this->_first != l._first) || (this->_last != l._last);
 }
@@ -454,14 +572,14 @@ void sldlist<T>::push_front(item& i)
 
   // if the list is empty, initialize both iterators
   if (this->empty()) {
-    this->_first._p = &i;
-    this->_last._p = &i;
+    this->_first.m_item = &i;
+    this->_last.m_item = &i;
     return;
   }
   // append the item at the front
   else {
-    i._next = this->_first._p;
-    this->_first._p = &i;
+    i.m_next = this->_first.m_item;
+    this->_first.m_item = &i;
     return;
   }
 }
@@ -473,13 +591,13 @@ void sldlist<T>::push_back(item& i)
 
   // if the list is empty, initialize both iterators
   if (this->empty()) {
-    this->_first._p = &i;
-    this->_last._p = &i;
+    this->_first.m_item = &i;
+    this->_last.m_item = &i;
     return;
   }
   // append the item at the back
   else {
-    this->_last._p->_next = &i;
+    this->_last.m_item->m_next = &i;
     ++this->_last;
     return;
   }
@@ -494,17 +612,17 @@ typename sldlist<T>::item* sldlist<T>::pop_front()
   }
   // if the last item will be removed, invalidate the iterators
   else if (this->_first == this->_last) {
-    item* i(this->_first._p);
-    this->_first._p = nullptr;
-    this->_last._p = nullptr;
-    i->_next = nullptr;
+    item* i(this->_first.m_item);
+    this->_first.m_item = nullptr;
+    this->_last.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the first item
   else {
-    item* i(this->_first._p);
+    item* i(this->_first.m_item);
     ++this->_first;
-    i->_next = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -518,22 +636,22 @@ typename sldlist<T>::item* sldlist<T>::pop_back()
   }
   // if the last item will be removed, invalidate the iterators
   else if (this->_first == this->_last) {
-    item* i(this->_last._p);
-    this->_first._p = nullptr;
-    this->_last._p = nullptr;
-    i->_next = nullptr;
+    item* i(this->_last.m_item);
+    this->_first.m_item = nullptr;
+    this->_last.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the last item
   else {
-    item* i(this->_last._p);
+    item* i(this->_last.m_item);
     // find the item before the last
     iterator it(this->_first);
-    while (it._p->_next != this->_last._p) {
+    while (it.m_item->m_next != this->_last.m_item) {
       ++it;
     }
     this->_last = it;
-    this->_last._p->_next = nullptr;
+    this->_last.m_item->m_next = nullptr;
     return i;
   }
 }
@@ -542,15 +660,15 @@ typename sldlist<T>::item* sldlist<T>::pop_back()
 
 template<typename T>
 slodlist<T>::slodlist(cmp_f& cmp) :
-  _base_sldlist<ORDERED, T>(), _min(), _max(), _cmp(cmp)
+  _sldlist<ORDERED, T>(), m_min(), m_max(), m_cmp(cmp)
 {}
 
 template<typename T>
 inline bool slodlist<T>::empty() const
 {
-  assert(!((this->_min._p == nullptr) ^ (this->_max._p == nullptr)));
+  assert(!((this->m_min.m_item == nullptr) ^ (this->m_max.m_item == nullptr)));
 
-  return (this->_min._p == nullptr);
+  return (this->m_min.m_item == nullptr);
 }
 
 template<typename T>
@@ -563,8 +681,8 @@ size_t slodlist<T>::size() const
   // iterate through the list
   else {
     size_t cnt(1);
-    iterator it(this->_min);
-    while (it != this->_max) {
+    iterator it(this->m_min);
+    while (it != this->m_max) {
       ++it;
       ++cnt;
     }
@@ -581,14 +699,14 @@ bool slodlist<T>::contains(const T& d) const
   }
   // iterate through the list and search for d
   else {
-    iterator it(this->_min);
+    iterator it(this->m_min);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
-      else if (it != this->_max) {
+      else if (it != this->m_max) {
         ++it;
       }
       // break the loop when all items have been checked
@@ -604,7 +722,7 @@ size_t slodlist<T>::clear()
 {
   size_t cnt(0);
   // pop all elements
-  while (this->remove_min() != nullptr) {
+  while (this->removeMin() != nullptr) {
     ++cnt;
   }
   return cnt;
@@ -619,37 +737,37 @@ typename slodlist<T>::item* slodlist<T>::remove(const T& rm)
   }
   // iterate through the list and remove the first item poining to rm
   else {
-    iterator current(this->_min);
+    iterator current(this->m_min);
     iterator last;
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
+      if (&(current.m_item->m_data) == &rm) {
         // the minimum item matches
-        if (current == this->_min) {
+        if (current == this->m_min) {
           // if the last item will be removed, set all pointers accordingly
-          if (this->_min == this->_max) {
-            this->_min._p = nullptr;
-            this->_max._p = nullptr;
+          if (this->m_min == this->m_max) {
+            this->m_min.m_item = nullptr;
+            this->m_max.m_item = nullptr;
           }
-          // increase the _min iterator
+          // increase the m_min iterator
           else {
-            ++this->_min;
+            ++this->m_min;
           }
         }
         // the maximum item matches
-        else if (current == this->_max) {
-          this->_max = last;
-          this->_max._p->_next = nullptr;
+        else if (current == this->m_max) {
+          this->m_max = last;
+          this->m_max.m_item->m_next = nullptr;
         }
         // any item inbetween the minimum and the maximum will be removed
         else {
-          last._p->_next = current._p->_next;
+          last.m_item->m_next = current.m_item->m_next;
         }
-        current._p->_next = nullptr;
-        return current._p;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep going as long as the end is not reached yet
-      else if (current != this->_max) {
+      else if (current != this->m_max) {
         last = current;
         ++current;
       }
@@ -662,27 +780,27 @@ typename slodlist<T>::item* slodlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool slodlist<T>::operator ==(const slodlist& l) const
+inline bool slodlist<T>::operator==(const slodlist& l) const
 {
-  return (this->_min == l._min) && (this->_max == l._max) && (this->_cmp == l._cmp);
+  return (this->m_min == l.m_min) && (this->m_max == l.m_max) && (this->m_cmp == l.m_cmp);
 }
 
 template<typename T>
-inline bool slodlist<T>::operator !=(const slodlist& l) const
+inline bool slodlist<T>::operator!=(const slodlist& l) const
 {
-  return (this->_min != l._min) || (this->_max != l._max) || (this->_cmp != l._cmp);
+  return (this->m_min != l.m_min) || (this->m_max != l.m_max) || (this->m_cmp != l.m_cmp);
 }
 
 template<typename T>
 inline typename slodlist<T>::iterator slodlist<T>::min() const
 {
-  return this->_min;
+  return this->m_min;
 }
 
 template<typename T>
 inline typename slodlist<T>::iterator slodlist<T>::max() const
 {
-  return this->_max;
+  return this->m_max;
 }
 
 template<typename T>
@@ -692,33 +810,33 @@ void slodlist<T>::insert(item& i)
 
   // if the list is empty, initialize it
   if (this->empty()) {
-    this->_min._p = &i;
-    this->_max._p = &i;
+    this->m_min.m_item = &i;
+    this->m_max.m_item = &i;
     return;
   }
   // iterate through the list and insert the item at the correct location
   else {
-    iterator current(this->_min);
+    iterator current(this->m_min);
     iterator last;
     while (true) {
       // check, whether i is smaller compared to the current item
-      if (!this->_cmp(*current, *i)) {
+      if (!this->m_cmp(*current, *i)) {
         // special case: if i is smaller than the first item, prepend it
-        if (current == this->_min) {
-          i._next = this->_min._p;
-          this->_min._p = &i;
+        if (current == this->m_min) {
+          i.m_next = this->m_min.m_item;
+          this->m_min.m_item = &i;
         }
         // insert the item
         else {
-          last._p->_next = &i;
-          i._next = current._p;
+          last.m_item->m_next = &i;
+          i.m_next = current.m_item;
         }
         return;
       }
       // if all items in the list are smaller, append it
-      else if (current == this->_max) {
-        this->_max._p->_next = &i;
-        ++this->_max;
+      else if (current == this->m_max) {
+        this->m_max.m_item->m_next = &i;
+        ++this->m_max;
         return;
       }
       // keep going as long as the end is not reached yet
@@ -731,54 +849,54 @@ void slodlist<T>::insert(item& i)
 }
 
 template<typename T>
-typename slodlist<T>::item* slodlist<T>::remove_min()
+typename slodlist<T>::item* slodlist<T>::removeMin()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterators
-  else if (this->_min == this->_max) {
-    item* i(this->_min._p);
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
-    i->_next = nullptr;
+  else if (this->m_min == this->m_max) {
+    item* i(this->m_min.m_item);
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the smallest item
   else {
-    item* i(this->_min._p);
-    ++this->_min;
-    i->_next = nullptr;
+    item* i(this->m_min.m_item);
+    ++this->m_min;
+    i->m_next = nullptr;
     return i;
   }
 }
 
 template<typename T>
-typename slodlist<T>::item* slodlist<T>::remove_max()
+typename slodlist<T>::item* slodlist<T>::removeMax()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterators
-  else if (this->_min == this->_max) {
-    item* i(this->_max._p);
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
-    i->_next = nullptr;
+  else if (this->m_min == this->m_max) {
+    item* i(this->m_max.m_item);
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the largest item
   else {
-    item* i(this->_max._p);
+    item* i(this->m_max.m_item);
     // find the item before the last
-    iterator it(this->_min);
-    while (it._p->_next != this->_max._p) {
+    iterator it(this->m_min);
+    while (it.m_item->m_next != this->m_max.m_item) {
       ++it;
     }
-    this->_max = it;
-    this->_max._p->_next = nullptr;
+    this->m_max = it;
+    this->m_max.m_item->m_next = nullptr;
     return i;
   }
 }
@@ -787,19 +905,19 @@ template<typename T>
 void slodlist<T>::sort()
 {
   // if the list contains less than two items, return immediately
-  if (this->_min._p == this->_max._p) {
+  if (this->m_min.m_item == this->m_max.m_item) {
     return;
   }
   // clear the list, and reinsert all items
   else {
     // initialize temporary iterators and item pointer
-    iterator min_tmp(this->_min);
-    iterator max_tmp(this->_max);
+    iterator min_tmp(this->m_min);
+    iterator max_tmp(this->m_max);
     item* i(nullptr);
 
     // reset the list
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
 
     // re-insert all items
     bool abort(false);
@@ -808,9 +926,9 @@ void slodlist<T>::sort()
       abort = (min_tmp == max_tmp);
 
       // detach and item and re-insert it in this list
-      i = min_tmp._p;
+      i = min_tmp.m_item;
       ++min_tmp;
-      i->_next = nullptr;
+      i->m_next = nullptr;
       this->insert(*i);
     }
 
@@ -822,13 +940,13 @@ void slodlist<T>::sort()
 
 template<typename T>
 slcdlist<T>::slcdlist() :
-  _base_sldlist<CIRCULAR, T>(), _latest()
+  _sldlist<CIRCULAR, T>(), m_latest()
 {}
 
 template<typename T>
 inline bool slcdlist<T>::empty() const
 {
-  return (this->_latest._p == nullptr);
+  return (this->m_latest.m_item == nullptr);
 }
 
 template<typename T>
@@ -841,11 +959,11 @@ size_t slcdlist<T>::size() const
   // iterate through the list
   else {
     size_t cnt(0);
-    iterator it(this->_latest);
+    iterator it(this->m_latest);
     do {
       ++it;
       ++cnt;
-    } while (it != this->_latest);
+    } while (it != this->m_latest);
     return cnt;
   }
 }
@@ -859,17 +977,17 @@ bool slcdlist<T>::contains(const T& d) const
   }
   // iterate through the list and search for d
   else {
-    iterator it(this->_latest);
+    iterator it(this->m_latest);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
       else {
         ++it;
         // break the loop when all items have been checked
-        if (it == this->_latest) {
+        if (it == this->m_latest) {
           return false;
         }
       }
@@ -897,31 +1015,31 @@ typename slcdlist<T>::item* slcdlist<T>::remove(const T& rm)
   }
   // iterate through the list and remove the first item poitning to rm
   else {
-    iterator current(this->_latest);
+    iterator current(this->m_latest);
     ++current;
-    iterator last(this->_latest);
+    iterator last(this->m_latest);
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
-        // if the _latest item matches
-        if (current == this->_latest) {
+      if (&(current.m_item->m_data) == &rm) {
+        // if the m_latest item matches
+        if (current == this->m_latest) {
           // if the last item will be removed, set all pointers accordingly
-          if (this->_latest._p->_next == this->_latest._p) {
-            item* i(this->_latest._p);
-            this->_latest._p = nullptr;
+          if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+            item* i(this->m_latest.m_item);
+            this->m_latest.m_item = nullptr;
             return i;
           }
-          // decrease the _latest iterator
+          // decrease the m_latest iterator
           else {
-            this->_latest = last;
+            this->m_latest = last;
           }
         }
-        last._p->_next = current._p->_next;
-        current._p->_next = nullptr;
-        return current._p;
+        last.m_item->m_next = current.m_item->m_next;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep going as long as the end is not reached yet
-      else if (current != this->_latest) {
+      else if (current != this->m_latest) {
         last = current;
         ++current;
       }
@@ -934,27 +1052,27 @@ typename slcdlist<T>::item* slcdlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool slcdlist<T>::operator ==(const slcdlist& l) const
+inline bool slcdlist<T>::operator==(const slcdlist& l) const
 {
-  return (this->_latest == l._latest);
+  return (this->m_latest == l.m_latest);
 }
 
 template<typename T>
-inline bool slcdlist<T>::operator !=(const slcdlist& l) const
+inline bool slcdlist<T>::operator!=(const slcdlist& l) const
 {
-  return (this->_latest != l._latest);
+  return (this->m_latest != l.m_latest);
 }
 
 template<typename T>
 inline typename slcdlist<T>::iterator slcdlist<T>::latest() const
 {
-  return this->_latest;
+  return this->m_latest;
 }
 
 template<typename T>
 inline typename slcdlist<T>::iterator slcdlist<T>::eldest() const
 {
-  iterator it(this->_latest);
+  iterator it(this->m_latest);
   ++it;
   return it;
 }
@@ -964,47 +1082,47 @@ void slcdlist<T>::insert(item& i)
 {
   assert(!i.attached());
 
-  // if the list is empty, initialize its iterator and the items _next pointer
+  // if the list is empty, initialize its iterator and the items m_next pointer
   if (this->empty()){
-    this->_latest._p = &i;
-    i._next = &i;
+    this->m_latest.m_item = &i;
+    i.m_next = &i;
     return;
   }
-  // insert the item as the _latest
+  // insert the item as the m_latest
   else {
-    i._next = this->_latest._p->_next;
-    this->_latest._p->_next = &i;
-    ++this->_latest;
+    i.m_next = this->m_latest.m_item->m_next;
+    this->m_latest.m_item->m_next = &i;
+    ++this->m_latest;
     return;
   }
 }
 
 template<typename T>
-typename slcdlist<T>::item* slcdlist<T>::remove_latest()
+typename slcdlist<T>::item* slcdlist<T>::removeLatest()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterator
-  else if (this->_latest._p->_next == this->_latest._p) {
-    item* i(this->_latest._p);
-    this->_latest._p = nullptr;
-    i->_next = nullptr;
+  else if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+    item* i(this->m_latest.m_item);
+    this->m_latest.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the latest and decrement the iterator
   else {
-    item* i(this->_latest._p);
+    item* i(this->m_latest.m_item);
     // search for the second latest item
-    iterator second_latest(this->_latest);
+    iterator second_latest(this->m_latest);
     ++second_latest;
-    while (second_latest._p->_next != this->_latest._p) {
+    while (second_latest.m_item->m_next != this->m_latest.m_item) {
       ++second_latest;
     }
-    second_latest._p->_next = this->_latest._p->_next;
-    this->_latest = second_latest;
-    i->_next = nullptr;
+    second_latest.m_item->m_next = this->m_latest.m_item->m_next;
+    this->m_latest = second_latest;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1017,17 +1135,17 @@ typename slcdlist<T>::item* slcdlist<T>::remove_eldest()
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterator
-  else if (this->_latest._p->_next == this->_latest._p) {
-    item* i(this->_latest._p);
-    this->_latest._p = nullptr;
-    i->_next = nullptr;
+  else if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+    item* i(this->m_latest.m_item);
+    this->m_latest.m_item = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the eldest
   else {
-    item* i(this->_latest._p->_next);
-    this->_latest._p->_next = i->_next;
-    i->_next = nullptr;
+    item* i(static_cast<item*>(this->m_latest.m_item->m_next));
+    this->m_latest.m_item->m_next = i->m_next;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1040,15 +1158,15 @@ typename slcdlist<T>::item* slcdlist<T>::remove_eldest()
 
 template<typename T>
 dldlist<T>::dldlist() :
-  _base_dldlist<NONE, T>(), _first(), _last()
+  _dldlist<NONE, T>(), _first(), _last()
 {}
 
 template<typename T>
 inline bool dldlist<T>::empty() const
 {
-  assert(!((this->_first._p == nullptr) ^ (this->_last._p == nullptr)));
+  assert(!((this->_first.m_item == nullptr) ^ (this->_last.m_item == nullptr)));
 
-  return (this->_first._p == nullptr);
+  return (this->_first.m_item == nullptr);
 }
 
 template<typename T>
@@ -1082,7 +1200,7 @@ bool dldlist<T>::contains(const T& d) const
     iterator it(this->_first);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
@@ -1120,33 +1238,33 @@ typename dldlist<T>::item* dldlist<T>::remove(const T& rm)
     iterator current(this->_first);
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
+      if (&(current.m_item->m_data) == &rm) {
         // the first item matches
         if (current == this->_first) {
           // if the last item will be reomved, set all pointers accordingly
           if (this->_first == this->_last) {
-            this->_first._p = nullptr;
-            this->_last._p = nullptr;
+            this->_first.m_item = nullptr;
+            this->_last.m_item = nullptr;
           }
           // increase the _first iterator
           else {
             ++this->_first;
-            this->_first._p->_prev = nullptr;
+            this->_first.m_item->m_prev = nullptr;
           }
         }
         // the last item matches
-        else if (current._p == this->_last._p) {
+        else if (current.m_item == this->_last.m_item) {
           --this->_last;
-          this->_last._p->_next = nullptr;
+          this->_last.m_item->m_next = nullptr;
         }
         // any item inbetween the first and last item will be removed
         else {
-          current._p->_prev->_next = current._p->_next;
-          current._p->_next->_prev = current._p->_prev;
+          static_cast<item*>(current.m_item->m_prev)->m_next = current.m_item->m_next;
+          static_cast<item*>(current.m_item->m_next)->m_prev = current.m_item->m_prev;
         }
-        current._p->_prev = nullptr;
-        current._p->_next = nullptr;
-        return current._p;
+        current.m_item->m_prev = nullptr;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep goind as long as the end is not reached yet
       else if (current != this->_last) {
@@ -1161,13 +1279,13 @@ typename dldlist<T>::item* dldlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool dldlist<T>::operator ==(const dldlist& l) const
+inline bool dldlist<T>::operator==(const dldlist& l) const
 {
   return (this->_first == l._first) && (this->_last == l._last);
 }
 
 template<typename T>
-inline bool dldlist<T>::operator !=(const dldlist& l) const
+inline bool dldlist<T>::operator!=(const dldlist& l) const
 {
   return (this->_first != l._first) || (this->_last != l._last);
 }
@@ -1191,14 +1309,14 @@ void dldlist<T>::push_front(item& i)
 
   // if the list is empty, initialize both iterators
   if (this->empty()) {
-    this->_first._p = &i;
-    this->_last._p = &i;
+    this->_first.m_item = &i;
+    this->_last.m_item = &i;
     return;
   }
   // append the item at the front
   else {
-    i._next = this->_first._p;
-    this->_first._p->_prev = &i;
+    i.m_next = this->_first.m_item;
+    this->_first.m_item->m_prev = &i;
     --this->_first;
     return;
   }
@@ -1211,14 +1329,14 @@ void dldlist<T>::push_back(item& i)
 
   // if the list is empty, initialize both iterators
   if (this->empty()) {
-    this->_first._p = &i;
-    this->_last._p = &i;
+    this->_first.m_item = &i;
+    this->_last.m_item = &i;
     return;
   }
   // append the item at the back;
   else {
-    this->_last._p->_next = &i;
-    i._prev = this->_last._p;
+    this->_last.m_item->m_next = &i;
+    i.m_prev = this->_last.m_item;
     ++this->_last;
     return;
   }
@@ -1233,20 +1351,20 @@ typename dldlist<T>::item* dldlist<T>::pop_front()
   }
   // if the last item will be removed, invalidate the iterators
   else if (this->_first == this->_last) {
-    item* i(this->_first._p);
-    this->_first._p = nullptr;
-    this->_last._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(this->_first.m_item);
+    this->_first.m_item = nullptr;
+    this->_last.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the first item
   else {
-    item* i(this->_first._p);
+    item* i(this->_first.m_item);
     ++this->_first;
-    this->_first._p->_prev = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    this->_first.m_item->m_prev = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1260,20 +1378,20 @@ typename dldlist<T>::item* dldlist<T>::pop_back()
   }
   // if the last item will be removed, invalidate the iterators
   else if (this->_first == this->_last) {
-    item* i(this->_last._p);
-    this->_first._p = nullptr;
-    this->_last._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(this->_last.m_item);
+    this->_first.m_item = nullptr;
+    this->_last.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the last item
   else {
-    item* i(this->_last._p);
+    item* i(this->_last.m_item);
     --this->_last;
-    this->_last._p->_next = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    this->_last.m_item->m_next = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1282,15 +1400,15 @@ typename dldlist<T>::item* dldlist<T>::pop_back()
 
 template<typename T>
 dlodlist<T>::dlodlist(cmp_f& cmp) :
-  _base_dldlist<ORDERED, T>(), _min(), _max(), _cmp(cmp)
+  _dldlist<ORDERED, T>(), m_min(), m_max(), m_cmp(cmp)
 {}
 
 template<typename T>
 inline bool dlodlist<T>::empty() const
 {
-  assert(!((this->_min._p == nullptr) ^ (this->_max._p == nullptr)));
+  assert(!((this->m_min.m_item == nullptr) ^ (this->m_max.m_item == nullptr)));
 
-  return (this->_min._p == nullptr);
+  return (this->m_min.m_item == nullptr);
 }
 
 template<typename T>
@@ -1303,8 +1421,8 @@ size_t dlodlist<T>::size() const
   // iterate through the list
   else {
     size_t cnt(1);
-    iterator it(this->_min);
-    while (it != this->_max) {
+    iterator it(this->m_min);
+    while (it != this->m_max) {
       ++it;
       ++cnt;
     }
@@ -1321,14 +1439,14 @@ bool dlodlist<T>::contains(const T& d) const
   }
   // iterator through the list and search for d
   else {
-    iterator it(this->_min);
+    iterator it(this->m_min);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
-      else if (it != this->_max) {
+      else if (it != this->m_max) {
         ++it;
       }
       // break the loop when all item have been checked
@@ -1344,7 +1462,7 @@ size_t dlodlist<T>::clear()
 {
   size_t cnt(0);
   // pop all elements
-  while (this->remove_min() != nullptr) {
+  while (this->removeMin() != nullptr) {
     ++cnt;
   }
   return cnt;
@@ -1359,39 +1477,39 @@ typename dlodlist<T>::item* dlodlist<T>::remove(const T& rm)
   }
   // iterate through the list and remove the first item pointing to rm
   else {
-    iterator current(this->_min);
+    iterator current(this->m_min);
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
+      if (&(current.m_item->m_data) == &rm) {
         // the minimum item matches
-        if (current == this->_min) {
+        if (current == this->m_min) {
           // if the last item will be removed, set all pointers accordingly
-          if (this->_min == this->_max) {
-            this->_min._p = nullptr;
-            this->_max._p = nullptr;
+          if (this->m_min == this->m_max) {
+            this->m_min.m_item = nullptr;
+            this->m_max.m_item = nullptr;
           }
-          // increase the _min iterator
+          // increase the m_min iterator
           else {
-            ++this->_min;
-            this->_min._p->_prev = nullptr;
+            ++this->m_min;
+            this->m_min.m_item->m_prev = nullptr;
           }
         }
         // the maximum item matches
-        else if (current == this->_max) {
-          --this->_max;
-          this->_max._p->_next = nullptr;
+        else if (current == this->m_max) {
+          --this->m_max;
+          this->m_max.m_item->m_next = nullptr;
         }
         // any item inbtetween the minimum and the maximum will be removed
         else {
-          current._p->_prev->_next = current._p->_next;
-          current._p->_next->_prev = current._p->_prev;
+          static_cast<item*>(current.m_item->m_prev)->m_next = current.m_item->m_next;
+          static_cast<item*>(current.m_item->m_next)->m_prev = current.m_item->m_prev;
         }
-        current._p->_prev = nullptr;
-        current._p->_next = nullptr;
-        return current._p;
+        current.m_item->m_prev = nullptr;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep going as long as the end is not reached yet
-      else if (current != this->_max) {
+      else if (current != this->m_max) {
         ++current;
       }
       // break the loop when all items have been checked
@@ -1403,27 +1521,27 @@ typename dlodlist<T>::item* dlodlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool dlodlist<T>::operator ==(const dlodlist& l) const
+inline bool dlodlist<T>::operator==(const dlodlist& l) const
 {
-  return (this->_min == l._min) && (this->_max == l._max) && (this->_cmp == l._cmp);
+  return (this->m_min == l.m_min) && (this->m_max == l.m_max) && (this->m_cmp == l.m_cmp);
 }
 
 template<typename T>
-inline bool dlodlist<T>::operator !=(const dlodlist& l) const
+inline bool dlodlist<T>::operator!=(const dlodlist& l) const
 {
-  return (this->_min != l._min) || (this->_max != l._max) || (this->_cmp != l._cmp);
+  return (this->m_min != l.m_min) || (this->m_max != l.m_max) || (this->m_cmp != l.m_cmp);
 }
 
 template<typename T>
 inline typename dlodlist<T>::iterator dlodlist<T>::min() const
 {
-  return this->_min;
+  return this->m_min;
 }
 
 template<typename T>
 inline typename dlodlist<T>::iterator dlodlist<T>::max() const
 {
-  return this->_max;
+  return this->m_max;
 }
 
 template<typename T>
@@ -1433,36 +1551,36 @@ void dlodlist<T>::insert(item& i)
 
   // if the list is empty, initialize it
   if (this->empty()) {
-    this->_min._p = &i;
-    this->_max._p = &i;
+    this->m_min.m_item = &i;
+    this->m_max.m_item = &i;
     return;
   }
   // iteratr through the list and insert the item at the correct location
   else {
-    iterator current(this->_min);
+    iterator current(this->m_min);
     while (true) {
       // check, whether i is smaller compared to the current item and insert it
-      if (!_cmp(*current, *i)) {
+      if (!m_cmp(*current, *i)) {
         // special case: if i is smaller than the first item, prepend it
-        if (current == this->_min) {
-          i._next = current._p;
-          current._p->_prev = &i;
-          --this->_min;
+        if (current == this->m_min) {
+          i.m_next = current.m_item;
+          current.m_item->m_prev = &i;
+          --this->m_min;
         }
         // insert the item
         else {
-          current._p->_prev->_next = &i;
-          i._prev = current._p->_prev;
-          i._next = current._p;
-          current._p->_prev = &i;
+          static_cast<item*>(current.m_item->m_prev)->m_next = static_cast<item*>(&i);
+          i.m_prev = current.m_item->m_prev;
+          i.m_next = current.m_item;
+          current.m_item->m_prev = &i;
         }
         return;
       }
       // if all items in the list are smaller, append it
-      else if (current == this->_max) {
-        this->_max._p->_next = &i;
-        i._prev = this->_max._p;
-        ++this->_max;
+      else if (current == this->m_max) {
+        this->m_max.m_item->m_next = &i;
+        i.m_prev = this->m_max.m_item;
+        ++this->m_max;
         return;
       }
       // keep going as long as the end is not reached yet
@@ -1474,55 +1592,55 @@ void dlodlist<T>::insert(item& i)
 }
 
 template<typename T>
-typename dlodlist<T>::item* dlodlist<T>::remove_min()
+typename dlodlist<T>::item* dlodlist<T>::removeMin()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterators
-  else if (this->_min == this->_max) {
-    item* i(this->_min._p);
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+  else if (this->m_min == this->m_max) {
+    item* i(this->m_min.m_item);
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the smallest item
   else {
-    item* i(this->_min._p);
-    ++this->_min;
-    this->_min._p->_prev = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(this->m_min.m_item);
+    ++this->m_min;
+    this->m_min.m_item->m_prev = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
 
 template<typename T>
-typename dlodlist<T>::item* dlodlist<T>::remove_max()
+typename dlodlist<T>::item* dlodlist<T>::removeMax()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterators
-  if (this->_min == this->_max) {
-    item* i(this->_max._p);
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+  if (this->m_min == this->m_max) {
+    item* i(this->m_max.m_item);
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the largest item
   else {
-    item* i(this->_max._p);
-    --this->_max;
-    this->_max._p->_next = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(this->m_max.m_item);
+    --this->m_max;
+    this->m_max.m_item->m_next = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1531,19 +1649,19 @@ template<typename T>
 void dlodlist<T>::sort()
 {
   // if the list contains less than two items, return immediately
-  if (this->_min._p == this->_max._p) {
+  if (this->m_min.m_item == this->m_max.m_item) {
     return;
   }
   // clear the list, and reinsert all items
   else {
     // initialize temporary iterators and item pointer
-    iterator min_tmp(this->_min);
-    iterator max_tmp(this->_max);
+    iterator min_tmp(this->m_min);
+    iterator max_tmp(this->m_max);
     item* i(nullptr);
 
     // reset the list
-    this->_min._p = nullptr;
-    this->_max._p = nullptr;
+    this->m_min.m_item = nullptr;
+    this->m_max.m_item = nullptr;
 
     // re-insert all items
     bool abort(false);
@@ -1552,10 +1670,10 @@ void dlodlist<T>::sort()
       abort = (min_tmp == max_tmp);
 
       // detach and item and re-insert it in this list
-      i = min_tmp._p;
+      i = min_tmp.m_item;
       ++min_tmp;
-      i->_prev = nullptr;
-      i->_next = nullptr;
+      i->m_prev = nullptr;
+      i->m_next = nullptr;
       this->insert(*i);
     }
 
@@ -1567,13 +1685,13 @@ void dlodlist<T>::sort()
 
 template<typename T>
 dlcdlist<T>::dlcdlist() :
-  _base_dldlist<CIRCULAR, T>(), _latest()
+  _dldlist<CIRCULAR, T>(), m_latest()
 {}
 
 template<typename T>
 inline bool dlcdlist<T>::empty() const
 {
-  return (this->_latest._p == nullptr);
+  return (this->m_latest.m_item == nullptr);
 }
 
 template<typename T>
@@ -1586,11 +1704,11 @@ size_t dlcdlist<T>::size() const
   // iterate through the list
   else {
     size_t cnt(0);
-    iterator it(this->_latest);
+    iterator it(this->m_latest);
     do {
       ++it;
       ++cnt;
-    } while (it != this->_latest);
+    } while (it != this->m_latest);
     return cnt;
   }
 }
@@ -1604,17 +1722,17 @@ bool dlcdlist<T>::contains(const T& d) const
   }
   // iterate through the list and search for d
   else {
-    iterator it(this->_latest);
+    iterator it(this->m_latest);
     while (true) {
       // test for d
-      if (&(it._p->_data) == &d) {
+      if (&(it.m_item->m_data) == &d) {
         return true;
       }
       // keep going as long as the end is not reached yet
       else {
         ++it;
         // break the loop when all items have been checked
-        if (it == this->_latest) {
+        if (it == this->m_latest) {
           return false;
         }
       }
@@ -1642,32 +1760,32 @@ typename dlcdlist<T>::item* dlcdlist<T>::remove(const T& rm)
   }
   // iterator through the list and remove the first item pointing to rm
   else {
-    iterator current(this->_latest);
+    iterator current(this->m_latest);
     ++current;
     while (true) {
       // test for rm
-      if (&(current._p->_data) == &rm) {
-        // if the _latest item matches
-        if (current == this->_latest) {
+      if (&(current.m_item->m_data) == &rm) {
+        // if the m_latest item matches
+        if (current == this->m_latest) {
           // if the last item will be removed, set all pointer accordingly
-          if (this->_latest._p->_next == this->_latest._p) {
-            item* i(this->_latest._p);
-            this->_latest._p = nullptr;
+          if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+            item* i(this->m_latest.m_item);
+            this->m_latest.m_item = nullptr;
             return i;
           }
-          // decrease the _latest iterator
+          // decrease the m_latest iterator
           else {
-            --this->_latest;
+            --this->m_latest;
           }
         }
-        current._p->_prev->_next = current._p->_next;
-        current._p->_next->_prev = current._p->_prev;
-        current._p->_prev = nullptr;
-        current._p->_next = nullptr;
-        return current._p;
+        static_cast<item*>(current.m_item->m_prev)->m_next = current.m_item->m_next;
+        static_cast<item*>(current.m_item->m_next)->m_prev = current.m_item->m_prev;
+        current.m_item->m_prev = nullptr;
+        current.m_item->m_next = nullptr;
+        return current.m_item;
       }
       // keep going as long as the end is not reached yet
-      else if (current != this->_latest) {
+      else if (current != this->m_latest) {
         ++current;
       }
       // break the loop when all items have been checked
@@ -1679,27 +1797,27 @@ typename dlcdlist<T>::item* dlcdlist<T>::remove(const T& rm)
 }
 
 template<typename T>
-inline bool dlcdlist<T>::operator ==(const dlcdlist& l) const
+inline bool dlcdlist<T>::operator==(const dlcdlist& l) const
 {
-  return (this->_latest == l._latest);
+  return (this->m_latest == l.m_latest);
 }
 
 template<typename T>
-inline bool dlcdlist<T>::operator !=(const dlcdlist& l) const
+inline bool dlcdlist<T>::operator!=(const dlcdlist& l) const
 {
-  return (this->_latest != l._latest);
+  return (this->m_latest != l.m_latest);
 }
 
 template<typename T>
 inline typename dlcdlist<T>::iterator dlcdlist<T>::latest() const
 {
-  return this->_latest;
+  return this->m_latest;
 }
 
 template<typename T>
 inline typename dlcdlist<T>::iterator dlcdlist<T>::eldest() const
 {
-  iterator it(this->_latest);
+  iterator it(this->m_latest);
   ++it;
   return it;
 }
@@ -1709,47 +1827,47 @@ void dlcdlist<T>::insert(item& i)
 {
   assert(!i.attached());
 
-  // if the list is empty, initialize its iterator and the items _prev and _next pointers
+  // if the list is empty, initialize its iterator and the items m_prev and m_next pointers
   if (this->empty()) {
-    this->_latest._p = &i;
-    i._prev = &i;
-    i._next = &i;
+    this->m_latest.m_item = &i;
+    i.m_prev = &i;
+    i.m_next = &i;
     return;
   }
-  // insert the item as the _latest
+  // insert the item as the m_latest
   else {
-    i._prev = this->_latest._p;
-    i._next = this->_latest._p->_next;
-    this->_latest._p->_next->_prev = &i;
-    this->_latest._p->_next = &i;
-    ++this->_latest;
+    i.m_prev = this->m_latest.m_item;
+    i.m_next = this->m_latest.m_item->m_next;
+    static_cast<item*>(this->m_latest.m_item->m_next)->m_prev = &i;
+    this->m_latest.m_item->m_next = &i;
+    ++this->m_latest;
     return;
   }
 }
 
 template<typename T>
-typename dlcdlist<T>::item* dlcdlist<T>::remove_latest()
+typename dlcdlist<T>::item* dlcdlist<T>::removeLatest()
 {
   // if the list is empty, return immediately
   if (this->empty()) {
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterator
-  else if (this->_latest._p->_next == this->_latest._p) {
-    item* i(this->_latest._p);
-    this->_latest._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+  else if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+    item* i(this->m_latest.m_item);
+    this->m_latest.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the latest and decrement the iterator
   else {
-    item* i(this->_latest._p);
-    --this->_latest;
-    this->_latest._p->_next = i->_next;
-    this->_latest._p->_next->_prev = this->_latest._p;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(this->m_latest.m_item);
+    --this->m_latest;
+    this->m_latest.m_item->m_next = i->m_next;
+    static_cast<item*>(this->m_latest.m_item->m_next)->m_prev = this->m_latest.m_item;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }
@@ -1762,20 +1880,20 @@ typename dlcdlist<T>::item* dlcdlist<T>::remove_eldest()
     return nullptr;
   }
   // if the last item will be removed, invalidate the iterator
-  else if (this->_latest._p->_next == this->_latest._p) {
-    item* i(this->_latest._p);
-    this->_latest._p = nullptr;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+  else if (this->m_latest.m_item->m_next == this->m_latest.m_item) {
+    item* i(this->m_latest.m_item);
+    this->m_latest.m_item = nullptr;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
   // remove the eldest
   else {
-    item* i(this->_latest._p->_next);
-    this->_latest._p->_next = i->_next;
-    this->_latest._p->_next->_prev = this->_latest._p;
-    i->_prev = nullptr;
-    i->_next = nullptr;
+    item* i(static_cast<item*>(this->m_latest.m_item->m_next));
+    this->m_latest.m_item->m_next = i->m_next;
+    static_cast<item*>(this->m_latest.m_item->m_next)->m_prev = this->m_latest.m_item;
+    i->m_prev = nullptr;
+    i->m_next = nullptr;
     return i;
   }
 }

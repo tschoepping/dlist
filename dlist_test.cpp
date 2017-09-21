@@ -28,37 +28,45 @@ bool my_cmp(const uint32_t& a, const uint32_t& b) {
   return (a < b);
 }
 
-void sl_item_test()
+void slitem_test()
 {
   uint32_t data_a = 1;
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  sl_item<uint32_t> item_a(data_a);
-  sl_item<uint32_t> item_b(data_b);
-  sl_item<uint32_t> item_c(data_c);
+  slitem<uint32_t> item_a(data_a);
+  slitem<uint32_t> item_b(data_b);
+  slitem<uint32_t> item_c(data_c);
+
+  _item<uint32_t>* _item_a(&item_a);
+  _item<uint32_t>* _item_b(&item_b);
+  _item<uint32_t>* _item_c(&item_c);
+
+  _slitem* _slitem_a(&item_a);
+  _slitem* _slitem_b(&item_b);
+  _slitem* _slitem_c(&item_c);
 
   assert(*item_a == 1);
   assert(*item_b == 2);
   assert(*item_c == 2);
 
-  assert((item_a.operator ->()) == &data_a);
-  assert((item_b.operator ->()) == &data_b);
-  assert((item_c.operator ->()) == &data_c);
+  assert((item_a.operator->()) == &data_a);
+  assert((item_b.operator->()) == &data_b);
+  assert((item_c.operator->()) == &data_c);
 
   assert(item_a.attached() == false);
   assert(item_b.attached() == false);
   assert(item_c.attached() == false);
 
-  assert(sl_item<uint32_t>::identical(item_a, item_a) == true);
-  assert(sl_item<uint32_t>::identical(item_a, item_b) == false);
-  assert(sl_item<uint32_t>::identical(item_a, item_c) == false);
-  assert(sl_item<uint32_t>::identical(item_b, item_a) == false);
-  assert(sl_item<uint32_t>::identical(item_b, item_b) == true);
-  assert(sl_item<uint32_t>::identical(item_b, item_c) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_a) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_b) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_c) == true);
+  assert(slitem<uint32_t>::identical(item_a, item_a) == true);
+  assert(slitem<uint32_t>::identical(item_a, item_b) == false);
+  assert(slitem<uint32_t>::identical(item_a, item_c) == false);
+  assert(slitem<uint32_t>::identical(item_b, item_a) == false);
+  assert(slitem<uint32_t>::identical(item_b, item_b) == true);
+  assert(slitem<uint32_t>::identical(item_b, item_c) == false);
+  assert(slitem<uint32_t>::identical(item_c, item_a) == false);
+  assert(slitem<uint32_t>::identical(item_c, item_b) == false);
+  assert(slitem<uint32_t>::identical(item_c, item_c) == true);
 
   assert((item_a == item_a) == true);
   assert((item_a == item_b) == false);
@@ -80,50 +88,108 @@ void sl_item_test()
   assert((item_c != item_b) == true);
   assert((item_c != item_c) == false);
 
-  assert(sl_item<uint32_t>::identical(item_a, item_a) == true);
-  assert(sl_item<uint32_t>::identical(item_a, item_b) == false);
-  assert(sl_item<uint32_t>::identical(item_a, item_c) == false);
-  assert(sl_item<uint32_t>::identical(item_b, item_a) == false);
-  assert(sl_item<uint32_t>::identical(item_b, item_b) == true);
-  assert(sl_item<uint32_t>::identical(item_b, item_c) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_a) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_b) == false);
-  assert(sl_item<uint32_t>::identical(item_c, item_c) == true);
+  assert(_slitem::identical(item_a, item_a) == true);
+  assert(_slitem::identical(item_a, item_b) == true);
+  assert(_slitem::identical(item_a, item_c) == true);
+  assert(_slitem::identical(item_b, item_a) == true);
+  assert(_slitem::identical(item_b, item_b) == true);
+  assert(_slitem::identical(item_b, item_c) == true);
+  assert(_slitem::identical(item_c, item_a) == true);
+  assert(_slitem::identical(item_c, item_b) == true);
+  assert(_slitem::identical(item_c, item_c) == true);
+
+  assert((*_slitem_a == *_slitem_a) == true);
+  assert((*_slitem_a == *_slitem_b) == false);
+  assert((*_slitem_a == *_slitem_c) == false);
+  assert((*_slitem_b == *_slitem_a) == false);
+  assert((*_slitem_b == *_slitem_b) == true);
+  assert((*_slitem_b == *_slitem_c) == false);
+  assert((*_slitem_c == *_slitem_a) == false);
+  assert((*_slitem_c == *_slitem_b) == false);
+  assert((*_slitem_c == *_slitem_c) == true);
+
+  assert((*_slitem_a != *_slitem_a) == false);
+  assert((*_slitem_a != *_slitem_b) == true);
+  assert((*_slitem_a != *_slitem_c) == true);
+  assert((*_slitem_b != *_slitem_a) == true);
+  assert((*_slitem_b != *_slitem_b) == false);
+  assert((*_slitem_b != *_slitem_c) == true);
+  assert((*_slitem_c != *_slitem_a) == true);
+  assert((*_slitem_c != *_slitem_b) == true);
+  assert((*_slitem_c != *_slitem_c) == false);
+
+  assert(_item<uint32_t>::identical(item_a, item_a) == true);
+  assert(_item<uint32_t>::identical(item_a, item_b) == false);
+  assert(_item<uint32_t>::identical(item_a, item_c) == false);
+  assert(_item<uint32_t>::identical(item_b, item_a) == false);
+  assert(_item<uint32_t>::identical(item_b, item_b) == true);
+  assert(_item<uint32_t>::identical(item_b, item_c) == false);
+  assert(_item<uint32_t>::identical(item_c, item_a) == false);
+  assert(_item<uint32_t>::identical(item_c, item_b) == false);
+  assert(_item<uint32_t>::identical(item_c, item_c) == true);
+
+  assert((*_item_a == *_item_a) == true);
+  assert((*_item_a == *_item_b) == false);
+  assert((*_item_a == *_item_c) == false);
+  assert((*_item_b == *_item_a) == false);
+  assert((*_item_b == *_item_b) == true);
+  assert((*_item_b == *_item_c) == false);
+  assert((*_item_c == *_item_a) == false);
+  assert((*_item_c == *_item_b) == false);
+  assert((*_item_c == *_item_c) == true);
+
+  assert((*_item_a != *_item_a) == false);
+  assert((*_item_a != *_item_b) == true);
+  assert((*_item_a != *_item_c) == true);
+  assert((*_item_b != *_item_a) == true);
+  assert((*_item_b != *_item_b) == false);
+  assert((*_item_b != *_item_c) == true);
+  assert((*_item_c != *_item_a) == true);
+  assert((*_item_c != *_item_b) == true);
+  assert((*_item_c != *_item_c) == false);
 
   return;
 }
 
-void dl_item_test()
+void dlitem_test()
 {
   uint32_t data_a = 1;
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  dl_item<uint32_t> item_a(data_a);
-  dl_item<uint32_t> item_b(data_b);
-  dl_item<uint32_t> item_c(data_c);
+  dlitem<uint32_t> item_a(data_a);
+  dlitem<uint32_t> item_b(data_b);
+  dlitem<uint32_t> item_c(data_c);
+
+  _item<uint32_t>* _item_a(&item_a);
+  _item<uint32_t>* _item_b(&item_b);
+  _item<uint32_t>* _item_c(&item_c);
+
+  _dlitem* _dlitem_a(&item_a);
+  _dlitem* _dlitem_b(&item_b);
+  _dlitem* _dlitem_c(&item_c);
 
   assert(*item_a == 1);
   assert(*item_b == 2);
   assert(*item_c == 2);
 
-  assert((item_a.operator ->()) == &data_a);
-  assert((item_b.operator ->()) == &data_b);
-  assert((item_c.operator ->()) == &data_c);
+  assert((item_a.operator->()) == &data_a);
+  assert((item_b.operator->()) == &data_b);
+  assert((item_c.operator->()) == &data_c);
 
   assert(item_a.attached() == false);
   assert(item_b.attached() == false);
   assert(item_c.attached() == false);
 
-  assert(dl_item<uint32_t>::identical(item_a, item_a) == true);
-  assert(dl_item<uint32_t>::identical(item_a, item_b) == false);
-  assert(dl_item<uint32_t>::identical(item_a, item_c) == false);
-  assert(dl_item<uint32_t>::identical(item_b, item_a) == false);
-  assert(dl_item<uint32_t>::identical(item_b, item_b) == true);
-  assert(dl_item<uint32_t>::identical(item_b, item_c) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_a) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_b) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_c) == true);
+  assert(dlitem<uint32_t>::identical(item_a, item_a) == true);
+  assert(dlitem<uint32_t>::identical(item_a, item_b) == false);
+  assert(dlitem<uint32_t>::identical(item_a, item_c) == false);
+  assert(dlitem<uint32_t>::identical(item_b, item_a) == false);
+  assert(dlitem<uint32_t>::identical(item_b, item_b) == true);
+  assert(dlitem<uint32_t>::identical(item_b, item_c) == false);
+  assert(dlitem<uint32_t>::identical(item_c, item_a) == false);
+  assert(dlitem<uint32_t>::identical(item_c, item_b) == false);
+  assert(dlitem<uint32_t>::identical(item_c, item_c) == true);
 
   assert((item_a == item_a) == true);
   assert((item_a == item_b) == false);
@@ -145,15 +211,65 @@ void dl_item_test()
   assert((item_c != item_b) == true);
   assert((item_c != item_c) == false);
 
-  assert(dl_item<uint32_t>::identical(item_a, item_a) == true);
-  assert(dl_item<uint32_t>::identical(item_a, item_b) == false);
-  assert(dl_item<uint32_t>::identical(item_a, item_c) == false);
-  assert(dl_item<uint32_t>::identical(item_b, item_a) == false);
-  assert(dl_item<uint32_t>::identical(item_b, item_b) == true);
-  assert(dl_item<uint32_t>::identical(item_b, item_c) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_a) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_b) == false);
-  assert(dl_item<uint32_t>::identical(item_c, item_c) == true);
+  assert(_dlitem::identical(item_a, item_a) == true);
+  assert(_dlitem::identical(item_a, item_b) == true);
+  assert(_dlitem::identical(item_a, item_c) == true);
+  assert(_dlitem::identical(item_b, item_a) == true);
+  assert(_dlitem::identical(item_b, item_b) == true);
+  assert(_dlitem::identical(item_b, item_c) == true);
+  assert(_dlitem::identical(item_c, item_a) == true);
+  assert(_dlitem::identical(item_c, item_b) == true);
+  assert(_dlitem::identical(item_c, item_c) == true);
+
+  assert((*_dlitem_a == *_dlitem_a) == true);
+  assert((*_dlitem_a == *_dlitem_b) == false);
+  assert((*_dlitem_a == *_dlitem_c) == false);
+  assert((*_dlitem_b == *_dlitem_a) == false);
+  assert((*_dlitem_b == *_dlitem_b) == true);
+  assert((*_dlitem_b == *_dlitem_c) == false);
+  assert((*_dlitem_c == *_dlitem_a) == false);
+  assert((*_dlitem_c == *_dlitem_b) == false);
+  assert((*_dlitem_c == *_dlitem_c) == true);
+
+  assert((*_dlitem_a != *_dlitem_a) == false);
+  assert((*_dlitem_a != *_dlitem_b) == true);
+  assert((*_dlitem_a != *_dlitem_c) == true);
+  assert((*_dlitem_b != *_dlitem_a) == true);
+  assert((*_dlitem_b != *_dlitem_b) == false);
+  assert((*_dlitem_b != *_dlitem_c) == true);
+  assert((*_dlitem_c != *_dlitem_a) == true);
+  assert((*_dlitem_c != *_dlitem_b) == true);
+  assert((*_dlitem_c != *_dlitem_c) == false);
+
+  assert(_item<uint32_t>::identical(item_a, item_a) == true);
+  assert(_item<uint32_t>::identical(item_a, item_b) == false);
+  assert(_item<uint32_t>::identical(item_a, item_c) == false);
+  assert(_item<uint32_t>::identical(item_b, item_a) == false);
+  assert(_item<uint32_t>::identical(item_b, item_b) == true);
+  assert(_item<uint32_t>::identical(item_b, item_c) == false);
+  assert(_item<uint32_t>::identical(item_c, item_a) == false);
+  assert(_item<uint32_t>::identical(item_c, item_b) == false);
+  assert(_item<uint32_t>::identical(item_c, item_c) == true);
+
+  assert((*_item_a == *_item_a) == true);
+  assert((*_item_a == *_item_b) == false);
+  assert((*_item_a == *_item_c) == false);
+  assert((*_item_b == *_item_a) == false);
+  assert((*_item_b == *_item_b) == true);
+  assert((*_item_b == *_item_c) == false);
+  assert((*_item_c == *_item_a) == false);
+  assert((*_item_c == *_item_b) == false);
+  assert((*_item_c == *_item_c) == true);
+
+  assert((*_item_a != *_item_a) == false);
+  assert((*_item_a != *_item_b) == true);
+  assert((*_item_a != *_item_c) == true);
+  assert((*_item_b != *_item_a) == true);
+  assert((*_item_b != *_item_b) == false);
+  assert((*_item_b != *_item_c) == true);
+  assert((*_item_c != *_item_a) == true);
+  assert((*_item_c != *_item_b) == true);
+  assert((*_item_c != *_item_c) == false);
 
   return;
 }
@@ -164,9 +280,9 @@ void sldlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  sl_item<uint32_t> item_a(data_a);
-  sl_item<uint32_t> item_b(data_b);
-  sl_item<uint32_t> item_c(data_c);
+  sldlist<uint32_t>::item item_a(data_a);
+  sldlist<uint32_t>::item item_b(data_b);
+  sldlist<uint32_t>::item item_c(data_c);
 
   sldlist<uint32_t> list_a;
   sldlist<uint32_t> list_b;
@@ -228,20 +344,20 @@ void sldlist_test()
   sldlist<uint32_t>::iterator it_c;
   it_c = list_a.back();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == nullptr);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_a);
-  assert(it_b.operator ->() == &data_a);
+  assert(it_b.valid() == &item_a);
+  assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(0) == &data_a);
   assert(it_b.peek(1) == &data_b);
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.item() == &item_c);
-  assert(it_c.operator ->() == &data_c);
+  assert(it_c.valid() == &item_c);
+  assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(0) == &data_c);
   assert(it_c.peek(1) == nullptr);
@@ -280,7 +396,7 @@ void sldlist_test()
   ++it_a;
   assert(*it_a == data_c);
   ++it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   assert(list_a.remove(data_b) == &item_b);
   assert(list_a.size() == 2);
@@ -325,9 +441,9 @@ void slodlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  sl_item<uint32_t> item_a(data_a);
-  sl_item<uint32_t> item_b(data_b);
-  sl_item<uint32_t> item_c(data_c);
+  slodlist<uint32_t>::item item_a(data_a);
+  slodlist<uint32_t>::item item_b(data_b);
+  slodlist<uint32_t>::item item_c(data_c);
 
   slodlist<uint32_t> list_a(my_cmp);
   slodlist<uint32_t> list_b;
@@ -388,20 +504,20 @@ void slodlist_test()
   slodlist<uint32_t>::iterator it_c;
   it_c = list_a.max();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == nullptr);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_a);
-  assert(it_b.operator ->() == &data_a);
+  assert(it_b.valid() == &item_a);
+  assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(0) == &data_a);
   assert(it_b.peek(1) == &data_b);
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.item() == &item_c);
-  assert(it_c.operator ->() == &data_c);
+  assert(it_c.valid() == &item_c);
+  assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(0) == &data_c);
   assert(it_c.peek(1) == nullptr);
@@ -440,7 +556,7 @@ void slodlist_test()
   ++it_a;
   assert(*it_a == data_c);
   ++it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   assert(list_a.remove(data_b) == &item_b);
   assert(list_a.size() == 2);
@@ -471,8 +587,8 @@ void slodlist_test()
   assert(list_a.empty() == false);
   assert(list_a.size() == 3);
 
-  assert(list_a.remove_min() == &item_a);
-  assert(list_a.remove_max() == &item_b);
+  assert(list_a.removeMin() == &item_a);
+  assert(list_a.removeMax() == &item_b);
   assert(list_a.clear() == 1);
   assert(list_a.empty() == true);
 
@@ -493,9 +609,9 @@ void slcdlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  sl_item<uint32_t> item_a(data_a);
-  sl_item<uint32_t> item_b(data_b);
-  sl_item<uint32_t> item_c(data_c);
+  slcdlist<uint32_t>::item item_a(data_a);
+  slcdlist<uint32_t>::item item_b(data_b);
+  slcdlist<uint32_t>::item item_c(data_c);
 
   slcdlist<uint32_t> list_a;
   slcdlist<uint32_t> list_b;
@@ -563,20 +679,20 @@ void slcdlist_test()
   slcdlist<uint32_t>::iterator it_c;
   it_c = list_a.eldest();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == nullptr);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_c);
-  assert(it_b.operator ->() == &data_c);
+  assert(it_b.valid() == &item_c);
+  assert(it_b.operator->() == &data_c);
   assert(*it_b == data_c);
   assert(it_b.peek(0) == &data_c);
   assert(it_b.peek(1) == &data_a);
   assert(it_b.peek(2) == &data_b);
   assert(it_b.peek(3) == &data_c);
 
-  assert(it_c.item() == &item_a);
-  assert(it_c.operator ->() == &data_a);
+  assert(it_c.valid() == &item_a);
+  assert(it_c.operator->() == &data_a);
   assert(*it_c == data_a);
   assert(it_c.peek(0) == &data_a);
   assert(it_c.peek(1) == &data_b);
@@ -649,7 +765,7 @@ void slcdlist_test()
   assert(list_a.size() == 3);
 
   assert(list_a.remove_eldest() == &item_a);
-  assert(list_a.remove_latest() == &item_c);
+  assert(list_a.removeLatest() == &item_c);
   assert(list_a.clear() == 1);
   assert(list_a.empty() == true);
 
@@ -662,9 +778,9 @@ void dldlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  dl_item<uint32_t> item_a(data_a);
-  dl_item<uint32_t> item_b(data_b);
-  dl_item<uint32_t> item_c(data_c);
+  dldlist<uint32_t>::item item_a(data_a);
+  dldlist<uint32_t>::item item_b(data_b);
+  dldlist<uint32_t>::item item_c(data_c);
 
   dldlist<uint32_t> list_a;
   dldlist<uint32_t> list_b;
@@ -726,12 +842,12 @@ void dldlist_test()
   dldlist<uint32_t>::iterator it_c;
   it_c = list_a.back();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == false);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_a);
-  assert(it_b.operator ->() == &data_a);
+  assert(it_b.valid() == &item_a);
+  assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(-1) == nullptr);
   assert(it_b.peek(0) == &data_a);
@@ -739,8 +855,8 @@ void dldlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.item() == &item_c);
-  assert(it_c.operator ->() == &data_c);
+  assert(it_c.valid() == &item_c);
+  assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(-3) == nullptr);
   assert(it_c.peek(-2) == &data_a);
@@ -782,7 +898,7 @@ void dldlist_test()
   ++it_a;
   assert(*it_a == data_c);
   ++it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   it_a = list_a.back();
   assert(*it_a == data_c);
@@ -791,7 +907,7 @@ void dldlist_test()
   --it_a;
   assert(*it_a == data_a);
   --it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   assert(list_a.remove(data_b) == &item_b);
   assert(list_a.size() == 2);
@@ -836,9 +952,9 @@ void dlodlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  dl_item<uint32_t> item_a(data_a);
-  dl_item<uint32_t> item_b(data_b);
-  dl_item<uint32_t> item_c(data_c);
+  dlodlist<uint32_t>::item item_a(data_a);
+  dlodlist<uint32_t>::item item_b(data_b);
+  dlodlist<uint32_t>::item item_c(data_c);
 
   dlodlist<uint32_t> list_a(my_cmp);
   dlodlist<uint32_t> list_b;
@@ -899,12 +1015,12 @@ void dlodlist_test()
   dlodlist<uint32_t>::iterator it_c;
   it_c = list_a.max();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == false);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_a);
-  assert(it_b.operator ->() == &data_a);
+  assert(it_b.valid() == &item_a);
+  assert(it_b.operator->() == &data_a);
   assert(*it_b == data_a);
   assert(it_b.peek(-1) == nullptr);
   assert(it_b.peek(0) == &data_a);
@@ -912,8 +1028,8 @@ void dlodlist_test()
   assert(it_b.peek(2) == &data_c);
   assert(it_b.peek(3) == nullptr);
 
-  assert(it_c.item() == &item_c);
-  assert(it_c.operator ->() == &data_c);
+  assert(it_c.valid() == &item_c);
+  assert(it_c.operator->() == &data_c);
   assert(*it_c == data_c);
   assert(it_c.peek(-3) == nullptr);
   assert(it_c.peek(-2) == &data_a);
@@ -955,7 +1071,7 @@ void dlodlist_test()
   ++it_a;
   assert(*it_a == data_c);
   ++it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   it_a = list_a.max();
   assert(*it_a == data_c);
@@ -964,7 +1080,7 @@ void dlodlist_test()
   --it_a;
   assert(*it_a == data_a);
   --it_a;
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.operator->() == nullptr);
 
   assert(list_a.remove(data_b) == &item_b);
   assert(list_a.size() == 2);
@@ -995,8 +1111,8 @@ void dlodlist_test()
   assert(list_a.empty() == false);
   assert(list_a.size() == 3);
 
-  assert(list_a.remove_min() == &item_a);
-  assert(list_a.remove_max() == &item_b);
+  assert(list_a.removeMin() == &item_a);
+  assert(list_a.removeMax() == &item_b);
   assert(list_a.clear() == 1);
   assert(list_a.empty() == true);
 
@@ -1017,9 +1133,9 @@ void dlcdlist_test()
   uint32_t data_b = 2;
   uint32_t data_c = 2;
 
-  dl_item<uint32_t> item_a(data_a);
-  dl_item<uint32_t> item_b(data_b);
-  dl_item<uint32_t> item_c(data_c);
+  dlcdlist<uint32_t>::item item_a(data_a);
+  dlcdlist<uint32_t>::item item_b(data_b);
+  dlcdlist<uint32_t>::item item_c(data_c);
 
   dlcdlist<uint32_t> list_a;
   dlcdlist<uint32_t> list_b;
@@ -1087,12 +1203,12 @@ void dlcdlist_test()
   dlcdlist<uint32_t>::iterator it_c;
   it_c = list_a.eldest();
 
-  assert(it_a.item() == nullptr);
-  assert(it_a.operator ->() == nullptr);
+  assert(it_a.valid() == false);
+  assert(it_a.operator->() == nullptr);
   assert(it_a.peek() == nullptr);
 
-  assert(it_b.item() == &item_c);
-  assert(it_b.operator ->() == &data_c);
+  assert(it_b.valid() == &item_c);
+  assert(it_b.operator->() == &data_c);
   assert(*it_b == data_c);
   assert(it_b.peek(-3) == &data_c);
   assert(it_b.peek(-2) == &data_a);
@@ -1102,8 +1218,8 @@ void dlcdlist_test()
   assert(it_b.peek(2) == &data_b);
   assert(it_b.peek(3) == &data_c);
 
-  assert(it_c.item() == &item_a);
-  assert(it_c.operator ->() == &data_a);
+  assert(it_c.valid() == &item_a);
+  assert(it_c.operator->() == &data_a);
   assert(*it_c == data_a);
   assert(it_c.peek(-3) == &data_a);
   assert(it_c.peek(-2) == &data_b);
@@ -1185,7 +1301,7 @@ void dlcdlist_test()
   assert(list_a.size() == 3);
 
   assert(list_a.remove_eldest() == &item_a);
-  assert(list_a.remove_latest() == &item_c);
+  assert(list_a.removeLatest() == &item_c);
   assert(list_a.clear() == 1);
   assert(list_a.empty() == true);
 
@@ -1194,12 +1310,12 @@ void dlcdlist_test()
 
 int main(int argc, char *argv[])
 {
-  cout << "testing sl_item..." << flush;
-  sl_item_test();
+  cout << "testing slitem..." << flush;
+  slitem_test();
   cout << "\tsuccess" << endl;
 
-  cout << "testing dl_item..." << flush;
-  dl_item_test();
+  cout << "testing dlitem..." << flush;
+  dlitem_test();
   cout << "\tsuccess" << endl;
 
   cout << "testing sldlist..." << flush;

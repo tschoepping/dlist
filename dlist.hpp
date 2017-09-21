@@ -30,7 +30,7 @@ namespace dlist {
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
- * @brief   Enum to differentiate between singly and doubly linked dlists.
+ * @brief   Enumerator to differentiate between singly and doubly linked dlists.
  */
 enum linked_t {
   SINGLY_LINKED,  /**< Identifier for singly linked dlists. */
@@ -38,7 +38,7 @@ enum linked_t {
 };
 
 /**
- * @brief   Enum to differentiate between standard, ordered and circular dlists.
+ * @brief   Enumerator to differentiate between standard, ordered, and circular dlists.
  */
 enum property_t {
   NONE,       /**< Identifier for standard dlists. */
@@ -49,10 +49,10 @@ enum property_t {
 /**
  * @brief   Default compare function for ordered dlists.
  *
- * @tparam T  Argument type or objects to compare.
+ * @tparam T  Argument type of objects to compare.
  *
- * @param[in] a   First argument to compare.
- * @param[in] b   Second argument to compare.
+ * @param[in] a   First object to compare.
+ * @param[in] b   Second object to compare.
  *
  * @return    true, if a is smaller than b.
  */
@@ -66,14 +66,16 @@ static inline bool default_cmp(const T& a, const T& b)
 // FORWARD DECLARATIONS                                                       //
 ////////////////////////////////////////////////////////////////////////////////
 
-template<typename T> class _base_item;
-template<typename T> class sl_item;
-template<typename T> class dl_item;
-template<typename T> class sl_iterator;
-template<typename T> class dl_iterator;
-template<linked_t LINKED, property_t PROPERTY, typename T> class _base_dlist;
-template<property_t PROPERTY, typename T> class _base_sldlist;
-template<property_t PROPERTY, typename T> class _base_dldlist;
+class _slitem;
+class _dlitem;
+template<typename T> class _item;
+template<typename T> class slitem;
+template<typename T> class dlitem;
+template<typename T> class sliterator;
+template<typename T> class dliterator;
+template<linked_t LINKED, property_t PROPERTY, typename T> class _dlist;
+template<property_t PROPERTY, typename T> class _sldlist;
+template<property_t PROPERTY, typename T> class _dldlist;
 template<typename T> class sldlist;
 template<typename T> class slodlist;
 template<typename T> class slcdlist;
@@ -86,56 +88,222 @@ template<typename T> class dlcdlist;
 ////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * @brief   Base class for dlsit singly linked items.
+ */
+class _slitem
+{
+protected:
+  /**
+   * @brief   Pointer to the next item in the dlist.
+   */
+  _slitem* m_next;
+
+private:
+  /**
+   * @brief   The copy constructor is prohibited and must not be implemented.
+   */
+  _slitem(const _slitem&);
+
+  /**
+   * @brief   The copy operator is prohibited and must not be implemented.
+   */
+  _slitem& operator=(const _slitem&);
+
+public:
+  /**
+   * @brief   The default constructor.
+   */
+  _slitem();
+
+  /**
+   * @brief   Checks whether the item is attached to a dlist.
+   *
+   * @note    The result of the function may be false negative.
+   *
+   * @return  true, if the item is attached to a dlist.
+   *
+   * @retval true   The _slitem is attached to a dlist.
+   * @retval false  The _slitem is either not attached to a dlist, or is the last item in a non-circular list.
+   */
+  bool attached() const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The _slitem to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  virtual bool operator==(const _slitem& i) const;
+
+  /**
+   * @brief   Unequality operator.
+   *
+   * @param[in] i   The _slitem to compare.
+   *
+   * @return    true, if the argument is not identical.
+   */
+  virtual bool operator!=(const _slitem& i) const;
+
+  /**
+   * @brief   Checks whether the given _slitems are identical.
+   *
+   * @param[in] a   The first _slitem to compare.
+   * @param[in] b   The second _slitem to compare.
+   *
+   * @return    true, if the both _slitems are identical.
+   */
+  static bool identical(const _slitem& a, const _slitem& b);
+};
+
+/**
+ * @brief   Base class for dlsit doubly linked items.
+ */
+class _dlitem
+{
+protected:
+  /**
+   * @brief   Pointer to the previous item in the dlist.
+   */
+  _dlitem* m_prev;
+
+  /**
+   * @brief   Pointer to the next item in the dlist.
+   */
+  _dlitem* m_next;
+
+private:
+  /**
+   * @brief   The copy constructor is prohibited and must not be implemented.
+   */
+  _dlitem(const _dlitem&);
+
+  /**
+   * @brief   The copy operator is prohibited and must not be implemented.
+   */
+  _dlitem& operator=(const _dlitem&);
+
+public:
+  /**
+   * @brief   The default constructor.
+   */
+  _dlitem();
+
+  /**
+   * @brief   Checks whether the item is attached to a dlist.
+   *
+   * @return  true, if the item is attached to a dlist.
+   */
+  bool attached() const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The _dlitem to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  virtual bool operator==(const _dlitem& i) const;
+
+  /**
+   * @brief   Unequality operator.
+   *
+   * @param[in] i   The _dlitem to compare.
+   *
+   * @return    true, if the argument is not identical.
+   */
+  virtual bool operator!=(const _dlitem& i) const;
+
+  /**
+   * @brief   Checks whether the given _dlitems are identical.
+   *
+   * @param[in] a   The first _dlitem to compare.
+   * @param[in] b   The second _dlitem to compare.
+   *
+   * @return    true, if the both _dlitems are identical.
+   */
+  static bool identical(const _dlitem& a, const _dlitem& b);
+};
+
+/**
  * @brief   Base class for dlist items.
  *
  * @tparam T  Data type of content/payload.
  */
 template<typename T>
-class _base_item
+class _item
 {
 protected:
   /**
    * @brief   Content/payload of the item.
    */
-  T& _data;
+  T& m_data;
 
 private:
   /**
    * @brief   The default constructor is prohibited and must not be implemented.
    */
-  _base_item();
+  _item();
 
   /**
    * @brief   The copy constructor is prohibited and must not be implemented.
    */
-  _base_item(const _base_item&); // forbidden
+  _item(const _item&);
 
   /**
    * @brief   The copy operator is prohibited and must not be implemented.
    */
-  _base_item& operator=(const _base_item&); // forbidden
+  _item& operator=(const _item&);
 
 public:
   /**
    * @brief   The only constructor with payload as argument.
    *
-   * @param[in] d   The payload to set for the _base_item.
+   * @param[in] d   The payload to set for the _item.
    */
-  _base_item(T& d);
+  _item(T& d);
 
   /**
    * @brief   Indirection operator.
    *
    * @return  Reference to the content/payload.
    */
-  T& operator *();
+  T& operator*();
 
   /**
    * @brief   Dereference operator.
    *
    * @return  Pointer to the content/payload.
    */
-  T* operator ->();
+  T* operator->();
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The _item to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  virtual bool operator==(const _item& i) const;
+
+  /**
+   * @brief   Unequality operator.
+   *
+   * @param[in] i   The _item to compare.
+   *
+   * @return    true, if the argument is not identical.
+   */
+  virtual bool operator!=(const _item& i) const;
+
+  /**
+   * @brief   Checks whether the given _items are identical.
+   *
+   * @param[in] a   The first _item to compare.
+   * @param[in] b   The second _item to compare.
+   *
+   * @return    true, if the both _items are identical.
+   */
+  static bool identical(const _item& a, const _item& b);
 
   /**
    * @brief   Checks whether the item is attached to a dlist.
@@ -151,42 +319,36 @@ public:
  * @tparam T  Data type of content/payload.
  */
 template<typename T>
-class sl_item : public _base_item<T>
+class slitem : public _slitem, public _item<T>
 {
-  friend class sl_iterator<T>;
-  friend class sldlist<T>;
-  friend class slodlist<T>;
-  friend class slcdlist<T>;
-
-private:
-  /**
-   * @brief   Pointer to the next item in the dlist.
-   */
-  sl_item* _next;
+friend class sliterator<T>;
+friend class sldlist<T>;
+friend class slodlist<T>;
+friend class slcdlist<T>;
 
 private:
   /**
    * @brief   The default constructor is prohibited and must not be implemented.
    */
-  sl_item();
+  slitem();
 
   /**
    * @brief   The copy constructor is prohibited and must not be implemented.
    */
-  sl_item(const sl_item&);
+  slitem(const slitem&);
 
   /**
    * @brief   The copy operator is prohibited and must not be implemented.
    */
-  sl_item& operator=(const sl_item&);
+  slitem& operator=(const slitem&);
 
 public:
   /**
    * @brief   The only constructor with payload as argument.
    *
-   * @param[in] d   The payload to set for the sl_item.
+   * @param[in] d   The payload to set for the slitem.
    */
-  sl_item(T& d);
+  slitem(T& d);
 
   /**
    * @brief   Checks whether the item is attached to a dlist.
@@ -195,38 +357,74 @@ public:
    *
    * @return  true, if the item is attached to a dlist.
    *
-   * @retval true   The sl_item is attached to a dlist.
-   * @retval false  The sl_item is either not attached to a dlist, or is the last item in a non-circular list.
+   * @retval true   The slitem is attached to a dlist.
+   * @retval false  The slitem is either not attached to a dlist, or is the last item in a non-circular list.
    */
   bool attached() const;
 
   /**
    * @brief   Equality operator.
    *
-   * @param[in] i   The sl_item to compare.
+   * @param[in] i   The _slitem to compare.
    *
-   * @return    true, if the sl_items are identical.
+   * @return    true, if the argument is identical.
    */
-  bool operator ==(const sl_item& i) const;
+  bool operator==(const _slitem& i) const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The _item to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  bool operator==(const _item<T>& i) const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The slitem to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  bool operator==(const slitem& i) const;
 
   /**
    * @brief   Unequality operator.
    *
-   * @param[in] i   The sl_item to compare.
+   * @param[in] i   The _slitem to compare.
    *
-   * @return    true, if the sl_items are not identical.
+   * @return    true, if the argument is identical.
    */
-  bool operator !=(const sl_item& i) const;
+  bool operator!=(const _slitem& i) const;
 
   /**
-   * @brief   Checks whether the given sl_items are identical.
+   * @brief   Unequality operator.
    *
-   * @param[in] a   The first sl_item to compare.
-   * @param[in] b   The second sl_item to compare.
+   * @param[in] i   The _item to compare.
    *
-   * @return    true, if the both sl_items are identical.
+   * @return    true, if the argument is identical.
    */
-  static bool identical(const sl_item& a, const sl_item& b);
+  bool operator!=(const _item<T>& i) const;
+
+  /**
+   * @brief   Unequality operator.
+   *
+   * @param[in] i   The slitem to compare.
+   *
+   * @return    true, if the argument is not identical.
+   */
+  bool operator!=(const slitem& i) const;
+
+  /**
+   * @brief   Checks whether the given slitems are identical.
+   *
+   * @param[in] a   The first slitem to compare.
+   * @param[in] b   The second slitem to compare.
+   *
+   * @return    true, if the both slitems are identical.
+   */
+  static bool identical(const slitem& a, const slitem& b);
 };
 
 /**
@@ -235,47 +433,36 @@ public:
  * @tparam T  Data type of content/payload.
  */
 template<typename T>
-class dl_item : public _base_item<T>
+class dlitem : public _dlitem, public _item<T>
 {
-  friend class dl_iterator<T>;
-  friend class dldlist<T>;
-  friend class dlodlist<T>;
-  friend class dlcdlist<T>;
-
-private:
-  /**
-   * @brief   Pointer to the next item in the dlist.
-   */
-  dl_item* _prev;
-
-  /**
-   * @brief   Pointer to the previous item in the dlist.
-   */
-  dl_item* _next;
+friend class dliterator<T>;
+friend class dldlist<T>;
+friend class dlodlist<T>;
+friend class dlcdlist<T>;
 
 private:
   /**
    * @brief   The default constructor is prohibited and must not be implemented.
    */
-  dl_item();
+  dlitem();
 
   /**
    * @brief   The copy constructor is prohibited and must not be implemented.
    */
-  dl_item(const dl_item&);
+  dlitem(const dlitem&);
 
   /**
    * @brief   The copy operator is prohibited and must not be implemented.
    */
-  dl_item& operator=(const dl_item&);
+  dlitem& operator=(const dlitem&);
 
 public:
   /**
    * @brief   The only constructor with payload as argument.
    *
-   * @param[in] d   The payload to set for the dl_item.
+   * @param[in] d   The payload to set for the dlitem.
    */
-  dl_item(T& d);
+  dlitem(T& d);
 
   /**
    * @brief   Checks whether the item is attached to a dlist.
@@ -287,30 +474,66 @@ public:
   /**
    * @brief   Equality operator.
    *
-   * @param[in] i   The dl_item to compare.
+   * @param[in] i   The _dlitem to compare.
    *
-   * @return    true, if the dl_items are identical.
+   * @return    true, if the argument is identical.
    */
-  bool operator ==(const dl_item& i) const;
+  bool operator==(const _dlitem& i) const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The _item to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  bool operator==(const _item<T>& i) const;
+
+  /**
+   * @brief   Equality operator.
+   *
+   * @param[in] i   The dlitem to compare.
+   *
+   * @return    true, if the argument is identical.
+   */
+  bool operator==(const dlitem& i) const;
 
   /**
    * @brief   Unequality operator.
    *
-   * @param[in] i   The dl_item to compare.
+   * @param[in] i   The _dlitem to compare.
    *
-   * @return    true, if the dl_items are not identical.
+   * @return    true, if the argument is identical.
    */
-  bool operator !=(const dl_item& i) const;
+  bool operator!=(const _dlitem& i) const;
 
   /**
-   * @brief   Checks whether the given dl_items are identical.
+   * @brief   Unequality operator.
    *
-   * @param[in] a   The first dl_item to compare.
-   * @param[in] b   The second dl_item to compare.
+   * @param[in] i   The _item to compare.
    *
-   * @return    true, if the both dl_items are identical.
+   * @return    true, if the argument is identical.
    */
-  static bool identical(const dl_item& a, const dl_item& b);
+  bool operator!=(const _item<T>& i) const;
+
+  /**
+   * @brief   Unequality operator.
+   *
+   * @param[in] i   The dlitem to compare.
+   *
+   * @return    true, if the argument is not identical.
+   */
+  bool operator!=(const dlitem& i) const;
+
+  /**
+   * @brief   Checks whether the given dlitems are identical.
+   *
+   * @param[in] a   The first dlitem to compare.
+   * @param[in] b   The second dlitem to compare.
+   *
+   * @return    true, if the both dlitems are identical.
+   */
+  static bool identical(const dlitem& a, const dlitem& b);
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -323,36 +546,36 @@ public:
  * @tparam T  Data type of content/payload.
  */
 template<typename T>
-class sl_iterator : public std::iterator<std::forward_iterator_tag, sl_item<T>, size_t>
+class sliterator : public std::iterator<std::forward_iterator_tag, slitem<T>, size_t>
 {
-  friend class sldlist<T>;
-  friend class slodlist<T>;
-  friend class slcdlist<T>;
+friend class sldlist<T>;
+friend class slodlist<T>;
+friend class slcdlist<T>;
 
 public:
   /**
    * @brief   Alias for singly linked dlist item type with according payload type.
    */
-  typedef sl_item<T> item_t;
+  typedef slitem<T> item;
 
 private:
   /**
-   * @brief   Pointer to the associated sl_item or a nullpointer.
+   * @brief   Pointer to the associated slitem or a nullpointer.
    */
-  item_t* _p;
+  item* m_item;
 
 public:
   /**
    * @brief   Default constructor.
    */
-  sl_iterator();
+  sliterator();
 
   /**
    * @brief   Copy constructor.
    *
    * @param[in] it  Iterator to be copied.
    */
-  sl_iterator(const sl_iterator& it);
+  sliterator(const sliterator& it);
 
   /**
    * @brief   Copy operator.
@@ -361,69 +584,69 @@ public:
    *
    * @return  Reference to the resulting iterator.
    */
-  sl_iterator& operator =(const sl_iterator& it);
+  sliterator& operator=(const sliterator& it);
 
   /**
    * @brief   Equality operator.
    *
-   * @param[in] it  The sl_iterator to compare.
+   * @param[in] it  The sliterator to compare.
    *
-   * @return    true, if the sl_iterators are equal.
+   * @return    true, if the sliterators are equal.
    */
-  bool operator ==(const sl_iterator& it) const;
+  bool operator==(const sliterator& it) const;
 
   /**
    * @brief   Unequality operator.
    *
-   * @param[in] it  The sl_iterator to sompare.
+   * @param[in] it  The sliterator to sompare.
    *
-   * @return    true, if the sl_iterators are not equal.
+   * @return    true, if the sliterators are not equal.
    */
-  bool operator !=(const sl_iterator& it) const;
+  bool operator!=(const sliterator& it) const;
 
   /**
    * @brief   Increment operator.
-   * @details The pointer to the associated item _p is altered to point to the next item in the dlist.
-   *          If there is no next item in the list, _p will become a nullpointer.
-   *          If _p is a nullpointer, the iterator will remain unchainged.
+   * @details The pointer to the associated item m_item is altered to point to the next item in the dlist.
+   *          If there is no next item in the list, m_item will become a nullpointer.
+   *          If m_item is a nullpointer, the iterator will remain unchainged.
    *
    * @return  Reference to the resulting iterator.
    */
-  sl_iterator& operator ++();
+  sliterator& operator++();
 
   /**
    * @brief   Indirection operator.
    *
-   * @note    Function call will fail if no item is associated to the sl_iterator.
+   * @note    Function call will fail if no item is associated to the sliterator.
    *
-   * @return  Refeerence to the payload of the associated sl_item.
+   * @return  Refeerence to the payload of the associated slitem.
    */
-  T& operator *();
+  T& operator*();
 
   /**
    * @brief   Dereference iterator.
    *
-   * @return  Pointer to the the payload of the associated sl_item or a nullpointer of no item is associated.
+   * @return  Pointer to the the payload of the associated slitem or a nullpointer of no item is associated.
    */
-  T* operator ->();
+  T* operator->();
 
   /**
    * @brief   Peeks an arbitrary number of steps ahead in the dlist.
    *
-   * @details If no sl_item is associated to the sl_iterator, or the sl_item is not attached, or the given arguments exceeds the list, a nullpointer is returned.
+   * @details If no slitem is associated to the sliterator, or the slitem is not attached, or the given arguments exceeds the list, a nullpointer is returned.
    *
    * @param[in] n   Number of steps to peek ahead.
    *
-   * @return  Pointer to the payload of the according sl_item or a nullpointer.
+   * @return  Pointer to the payload of the according slitem or a nullpointer.
    */
   T* peek(const unsigned int n = 1) const;
 
   /**
-   * @brief   Retrieves the pointer to the associated item.
+   * @brief   Checks whether the iterator is pointing to an item.
    *
    * @return  Constant pointer to the associated item or a nullpointer.
    */
-  const item_t* item() const;
+  const item* valid() const;
 };
 
 /**
@@ -432,36 +655,36 @@ public:
  * @tparam T  Data type of content/payload.
  */
 template<typename T>
-class dl_iterator : public std::iterator<std::bidirectional_iterator_tag, dl_item<T>, size_t>
+class dliterator : public std::iterator<std::bidirectional_iterator_tag, dlitem<T>, size_t>
 {
-  friend class dldlist<T>;
-  friend class dlodlist<T>;
-  friend class dlcdlist<T>;
+friend class dldlist<T>;
+friend class dlodlist<T>;
+friend class dlcdlist<T>;
 
 public:
   /**
    * @brief   Alias for doubly linked dlist item type with according payload type.
    */
-  typedef dl_item<T> item_t;
+  typedef dlitem<T> item;
 
 private:
   /**
-   * @brief   Pointer to the associated dl_item or a nullpointer.
+   * @brief   Pointer to the associated dlitem or a nullpointer.
    */
-  item_t* _p;
+  item* m_item;
 
 public:
   /**
    * @brief   Default constructor.
    */
-  dl_iterator();
+  dliterator();
 
   /**
    * @brief   Copy constructor.
    *
    * @param[in] it  Iterator to be copied.
    */
-  dl_iterator(const dl_iterator& it);
+  dliterator(const dliterator& it);
 
   /**
    * @brief   Copy operator.
@@ -470,73 +693,79 @@ public:
    *
    * @return  Reference to the resulting iterator.
    */
-  dl_iterator& operator =(const dl_iterator& it);
+  dliterator& operator=(const dliterator& it);
 
   /**
    * @brief   Equality operator.
    *
-   * @param[in] it  The dl_iterator to compare.
+   * @param[in] it  The dliterator to compare.
    *
-   * @return    true, if the dl_iterators are equal.
+   * @return    true, if the dliterators are equal.
    */
-  bool operator ==(const dl_iterator& it) const;
+  bool operator==(const dliterator& it) const;
 
   /**
    * @brief   Unequality operator.
    *
-   * @param[in] it  The dl_iterator to sompare.
+   * @param[in] it  The dliterator to sompare.
    *
-   * @return    true, if the dl_iterators are not equal.
+   * @return    true, if the dliterators are not equal.
    */
-  bool operator !=(const dl_iterator& it) const;
+  bool operator!=(const dliterator& it) const;
 
   /**
    * @brief   Increment operator.
-   * @details The pointer to the associated item _p is altered to point to the next item in the dlist.
-   *          If there is no next item in the list, _p will become a nullpointer.
-   *          If _p is a nullpointer, the iterator will remain unchainged.
+   * @details The pointer to the associated item m_item is altered to point to the next item in the dlist.
+   *          If there is no next item in the list, m_item will become a nullpointer.
+   *          If m_item is a nullpointer, the iterator will remain unchainged.
    *
    * @return  Reference to the resulting iterator.
    */
-  dl_iterator& operator ++();
+  dliterator& operator++();
 
   /**
    * @brief   Decrement operator.
-   * @details The pointer to the associated item _p is altered to point to the previous item in the dlist.
-   *          If there is no previous item in the list, _p will become a nullpointer.
-   *          If _p is a nullpointer, the iterator will remain unchainged.
+   * @details The pointer to the associated item m_item is altered to point to the previous item in the dlist.
+   *          If there is no previous item in the list, m_item will become a nullpointer.
+   *          If m_item is a nullpointer, the iterator will remain unchainged.
    *
    * @return  Reference to the resulting iterator.
    */
-  dl_iterator& operator --();
+  dliterator& operator--();
 
   /**
    * @brief   Indirection operator.
    *
-   * @note    Function call will fail if no item is associated to the dl_iterator.
+   * @note    Function call will fail if no item is associated to the dliterator.
    *
-   * @return  Refeerence to the payload of the associated dl_item.
+   * @return  Refeerence to the payload of the associated dlitem.
    */
-  T& operator *();
+  T& operator*();
 
   /**
    * @brief   Dereference iterator.
    *
-   * @return  Pointer to the the payload of the associated dl_item or a nullpointer of no item is associated.
+   * @return  Pointer to the the payload of the associated dlitem or a nullpointer of no item is associated.
    */
-  T* operator ->();
+  T* operator->();
 
   /**
    * @brief   Peeks an arbitrary number of steps ahead/behind in the dlist.
    *
-   * @details If no dl_item is associated to the dl_iterator, or the dl_item is not attached, or the given arguments exceeds the list, a nullpointer is returned.
+   * @details If no dlitem is associated to the dliterator, or the dlitem is not attached, or the given arguments exceeds the list, a nullpointer is returned.
    *
    * @param[in] n   Number of steps to peek ahead (positive) or behind (negative).
    *
-   * @return  Pointer to the payload of the according dl_item or a nullpointer.
+   * @return  Pointer to the payload of the according dlitem or a nullpointer.
    */
   T* peek(const int n = 1) const;
-  const item_t* item() const;
+
+  /**
+   * @brief   Checks whether the iterator is pointing to an item.
+   *
+   * @return  Constant pointer to the associated item or a nullpointer.
+   */
+  const item* valid() const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -553,13 +782,13 @@ public:
  * @tparam T          Type of the data stored in the dlist.
  */
 template<linked_t LINKED, property_t PROPERTY, typename T>
-class _base_dlist
+class _dlist
 {
 public:
   /**
    * @brief   Default constructor.
    */
-  _base_dlist();
+  _dlist();
 
   /**
    * @brief   Checks whether the dlist is empty.
@@ -598,31 +827,31 @@ public:
  * @tparam T          Type of the data stored in the dlist.
  */
 template<property_t PROPERTY, typename T>
-class _base_sldlist : public _base_dlist<SINGLY_LINKED, PROPERTY, T>
+class _sldlist : public _dlist<SINGLY_LINKED, PROPERTY, T>
 {
 public:
   /**
    * @brief   Alias for singly linked dlist item type with according payload type.
    */
-  typedef sl_item<T> item;
+  typedef slitem<T> item;
 
   /**
    * @brief   Alias for singly linked dlist iterator type with according payload type.
    */
-  typedef sl_iterator<T> iterator;
+  typedef sliterator<T> iterator;
 
 public:
   /**
    * @brief   Default constructor.
    */
-  _base_sldlist();
+  _sldlist();
 
   /**
    * @brief   Removes a specific object from the list.
    *
    * @param[in] rm  The payload object to remove.
    *
-   * @return  Pointer to the removed sl_item or a nullpointer if the list does not contain the specified object.
+   * @return  Pointer to the removed slitem or a nullpointer if the list does not contain the specified object.
    */
   virtual item* remove(const T& rm) = 0;
 };
@@ -635,31 +864,31 @@ public:
  * @tparam T          Type of the data stored in the dlist.
  */
 template<property_t PROPERTY, typename T>
-class _base_dldlist : public _base_dlist<DOUBLY_LINKED, PROPERTY, T>
+class _dldlist : public _dlist<DOUBLY_LINKED, PROPERTY, T>
 {
 public:
   /**
    * @brief   Alias for doubly linked dlist item type with according payload type.
    */
-  typedef dl_item<T> item;
+  typedef dlitem<T> item;
 
   /**
    * @brief   Alias for doubly linked dlist iterator type with according payload type.
    */
-  typedef dl_iterator<T> iterator;
+  typedef dliterator<T> iterator;
 
 public:
   /**
    * @brief   Default constructor.
    */
-  _base_dldlist();
+  _dldlist();
 
   /**
    * @brief   Removes a specific object from the list.
    *
    * @param[in] rm  The payload object to remove.
    *
-   * @return  Pointer to the removed dl_item or a nullpointer if the list does not contain the specified object.
+   * @return  Pointer to the removed dlitem or a nullpointer if the list does not contain the specified object.
    */
   virtual item* remove(const T& rm) = 0;
 };
@@ -674,18 +903,18 @@ public:
  * @tparam T  Type of the data stored in the sldlist.
  */
 template<typename T>
-class sldlist : public _base_sldlist<NONE, T>
+class sldlist : public _sldlist<NONE, T>
 {
 public:
   /**
    * @brief   Alias for singly linked dlist item type with according payload type.
    */
-  typedef typename _base_sldlist<NONE, T>::item item;
+  typedef typename _sldlist<NONE, T>::item item;
 
   /**
    * @brief   Alias for singly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_sldlist<NONE, T>::iterator iterator;
+  typedef typename _sldlist<NONE, T>::iterator iterator;
 
 private:
   /**
@@ -748,7 +977,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const sldlist& l) const;
+  bool operator==(const sldlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -757,7 +986,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const sldlist& l) const;
+  bool operator!=(const sldlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the first element in the sldlist.
@@ -810,18 +1039,18 @@ public:
  * @tparam T  Type of the data stored in the slodlist.
  */
 template<typename T>
-class slodlist : public _base_sldlist<ORDERED, T>
+class slodlist : public _sldlist<ORDERED, T>
 {
 public:
   /**
    * @brief   Alias for singly linked dlist item type with according payload type.
    */
-  typedef typename _base_sldlist<ORDERED, T>::item item;
+  typedef typename _sldlist<ORDERED, T>::item item;
 
   /**
    * @brief   Alias for singly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_sldlist<ORDERED, T>::iterator iterator;
+  typedef typename _sldlist<ORDERED, T>::iterator iterator;
 
   /**
    * @brief   Alias for compare function.
@@ -835,17 +1064,17 @@ private:
   /**
    * @brief   Iterator pointing to the minimum item in the slodlist.
    */
-  iterator _min;
+  iterator m_min;
 
   /**
    * @brief   Iterator pointing to the maximum item in the slodlist.
    */
-  iterator _max;
+  iterator m_max;
 
   /**
    * @brief   Reference to a compare function.
    */
-  const cmp_f& _cmp;
+  const cmp_f& m_cmp;
 
 public:
   /**
@@ -899,7 +1128,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const slodlist& l) const;
+  bool operator==(const slodlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -908,7 +1137,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const slodlist& l) const;
+  bool operator!=(const slodlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the minimum element in the slodlist.
@@ -936,14 +1165,14 @@ public:
    *
    * @return  Pointer to the removed item, or a nullpointer if the slodlist was empty.
    */
-  item* remove_min();
+  item* removeMin();
 
   /**
    * @brief   Removes the maximum item from the slodlist
    *
    * @return  Pointer to the removed item, or a nullpointer if the slodlist was empty.
    */
-  item* remove_max();
+  item* removeMax();
 
   /**
    * @brief   Sorts all items in the list in case some values have been modified.
@@ -957,24 +1186,24 @@ public:
  * @tparam T  Type of the data stored in the slcdlist.
  */
 template<typename T>
-class slcdlist : public _base_sldlist<CIRCULAR, T>
+class slcdlist : public _sldlist<CIRCULAR, T>
 {
 public:
   /**
    * @brief   Alias for singly linked dlist item type with according payload type.
    */
-  typedef typename _base_sldlist<CIRCULAR, T>::item item;
+  typedef typename _sldlist<CIRCULAR, T>::item item;
 
   /**
    * @brief   Alias for singly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_sldlist<CIRCULAR, T>::iterator iterator;
+  typedef typename _sldlist<CIRCULAR, T>::iterator iterator;
 
 private:
   /**
    * @brief   Iterator pointing to the most recently inserted item in the slcdlist.
    */
-  iterator _latest;
+  iterator m_latest;
 
 public:
   /**
@@ -1026,7 +1255,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const slcdlist& l) const;
+  bool operator==(const slcdlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -1035,7 +1264,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const slcdlist& l) const;
+  bool operator!=(const slcdlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the latest element in the slcdlist.
@@ -1063,7 +1292,7 @@ public:
    *
    * @return  Pointer to the removed item, or a nullpointer if the slcdlist was empty.
    */
-  item* remove_latest();
+  item* removeLatest();
 
   /**
    * @brief   Removes the oldest item from the slcdlist.
@@ -1083,18 +1312,18 @@ public:
  * @tparam T  Type of the data stored in the dldlist.
  */
 template<typename T>
-class dldlist : public _base_dldlist<NONE, T>
+class dldlist : public _dldlist<NONE, T>
 {
 public:
   /**
    * @brief   Alias for doubly linked dlist item type with according payload type.
    */
-  typedef typename _base_dldlist<NONE, T>::item item;
+  typedef typename _dldlist<NONE, T>::item item;
 
   /**
    * @brief   Alias for doubly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_dldlist<NONE, T>::iterator iterator;
+  typedef typename _dldlist<NONE, T>::iterator iterator;
 
 private:
   /**
@@ -1157,7 +1386,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const dldlist& l) const;
+  bool operator==(const dldlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -1166,7 +1395,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const dldlist& l) const;
+  bool operator!=(const dldlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the first element in the dldlist.
@@ -1219,18 +1448,18 @@ public:
  * @tparam T  Type of the data stored in the dlodlist.
  */
 template<typename T>
-class dlodlist : public _base_dldlist<ORDERED, T>
+class dlodlist : public _dldlist<ORDERED, T>
 {
 public:
   /**
    * @brief   Alias for doubly linked dlist item type with according payload type.
    */
-  typedef typename _base_dldlist<ORDERED, T>::item item;
+  typedef typename _dldlist<ORDERED, T>::item item;
 
   /**
    * @brief   Alias for doubly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_dldlist<ORDERED, T>::iterator iterator;
+  typedef typename _dldlist<ORDERED, T>::iterator iterator;
 
   /**
    * @brief   Alias for compare function.
@@ -1244,17 +1473,17 @@ private:
   /**
    * @brief   Iterator pointing to the minimum item in the dlodlist.
    */
-  iterator _min;
+  iterator m_min;
 
   /**
    * @brief   Iterator pointing to the maximum item in the dlodlist.
    */
-  iterator _max;
+  iterator m_max;
 
   /**
    * @brief   Reference to a compare function.
    */
-  const cmp_f& _cmp;
+  const cmp_f& m_cmp;
 
 public:
   /**
@@ -1308,7 +1537,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const dlodlist& l) const;
+  bool operator==(const dlodlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -1317,7 +1546,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const dlodlist& l) const;
+  bool operator!=(const dlodlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the minimum element in the dlodlist.
@@ -1345,14 +1574,14 @@ public:
    *
    * @return  Pointer to the removed item, or a nullpointer if the dlodlist was empty.
    */
-  item* remove_min();
+  item* removeMin();
 
   /**
    * @brief   Removes the maximum item from the dlodlist
    *
    * @return  Pointer to the removed item, or a nullpointer if the dlodlist was empty.
    */
-  item* remove_max();
+  item* removeMax();
 
   /**
    * @brief   Sorts all items in the list in case some values have been modified.
@@ -1366,24 +1595,24 @@ public:
  * @tparam T  Type of the data stored in the dlcdlist.
  */
 template<typename T>
-class dlcdlist : public _base_dldlist<CIRCULAR, T>
+class dlcdlist : public _dldlist<CIRCULAR, T>
 {
 public:
   /**
    * @brief   Alias for doubly linked dlist item type with according payload type.
    */
-  typedef typename _base_dldlist<CIRCULAR, T>::item item;
+  typedef typename _dldlist<CIRCULAR, T>::item item;
 
   /**
    * @brief   Alias for doubly linked dlist iterator type with according payload type.
    */
-  typedef typename _base_dldlist<CIRCULAR, T>::iterator iterator;
+  typedef typename _dldlist<CIRCULAR, T>::iterator iterator;
 
 private:
   /**
    * @brief   Iterator pointing to the most recently inserted item in the dlcdlist.
    */
-  iterator _latest;
+  iterator m_latest;
 
 public:
   /**
@@ -1435,7 +1664,7 @@ public:
    *
    * @return  true, if both lists are equal.
    */
-  bool operator ==(const dlcdlist& l) const;
+  bool operator==(const dlcdlist& l) const;
 
   /**
    * @brief   Unequality operator.
@@ -1444,7 +1673,7 @@ public:
    *
    * @return  true, if both lists are not equal.
    */
-  bool operator !=(const dlcdlist& l) const;
+  bool operator!=(const dlcdlist& l) const;
 
   /**
    * @brief   Retrieves an iterator to the latest element in the dlcdlist.
@@ -1472,7 +1701,7 @@ public:
    *
    * @return  Pointer to the removed item, or a nullpointer if the dlcdlist was empty.
    */
-  item* remove_latest();
+  item* removeLatest();
 
   /**
    * @brief   Removes the oldest item from the dlcdlist.
