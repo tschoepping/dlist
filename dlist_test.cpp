@@ -1310,6 +1310,9 @@ void dlcdlist_test()
 
 int main(int argc, char *argv[])
 {
+  cout << "Welcome to the dlist library test suite." << endl;
+  cout << "The version of the library is " << DLIST_VERSION_MAJOR << '-' << DLIST_VERSION_MINOR << '-'<< DLIST_VERSION_PATCH << '.' << endl;
+
   cout << "testing slitem..." << flush;
   slitem_test();
   cout << "\tsuccess" << endl;

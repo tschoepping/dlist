@@ -23,6 +23,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <iterator>
 #include <cstddef>
 
+////////////////////////////////////////////////////////////////////////////////
+// VERSION INFORMATION                                                        //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief   Dlist identification macro.
+ */
+#define _DLIST_
+
+/**
+ * @brief   The dlist major version.
+ * @note    Changes of the major version imply incompatibilities.
+ */
+#define DLIST_VERSION_MAJOR   1
+
+/**
+ * @brief   The dlist minor version.
+ * @note    A higher minor version implies new functionalty, but all old interfaces are still available.
+ */
+#define DLIST_VERSION_MINOR   0
+
+/**
+ * @brief   The periphery abstraction layer interface patch level.
+ */
+#define DLIST_VERSION_PATCH   0
+
 namespace dlist {
 
 ////////////////////////////////////////////////////////////////////////////////
