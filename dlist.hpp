@@ -46,22 +46,6 @@ enum property_t {
   CIRCULAR,   /**< Identifier for circular dlists. */
 };
 
-/**
- * @brief   Default compare function for ordered dlists.
- *
- * @tparam T  Argument type of objects to compare.
- *
- * @param[in] a   First object to compare.
- * @param[in] b   Second object to compare.
- *
- * @return    true, if a is smaller than b.
- */
-template<typename T>
-static inline bool default_cmp(const T& a, const T& b)
-{
-  return (a < b);
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // FORWARD DECLARATIONS                                                       //
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +66,22 @@ template<typename T> class slcdlist;
 template<typename T> class dldlist;
 template<typename T> class dlodlist;
 template<typename T> class dlcdlist;
+
+////////////////////////////////////////////////////////////////////////////////
+// STATIC FUNCTIONS                                                           //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief   Default compare function for ordered dlists.
+ *
+ * @tparam T  Argument type of objects to compare.
+ *
+ * @param[in] a   First object to compare.
+ * @param[in] b   Second object to compare.
+ *
+ * @return    true, if a is smaller than b.
+ */
+template<typename T> static inline bool _defaultCmp(const T& a, const T& b);
 
 ////////////////////////////////////////////////////////////////////////////////
 // ITEMS                                                                      //
@@ -1086,7 +1086,7 @@ public:
    *
    * @param[in] cmp   Reference to a compare function.
    */
-  slodlist(cmp_f& cmp = default_cmp);
+  slodlist(cmp_f& cmp = _defaultCmp);
 
   /**
    * @brief   Checks whether the slodlist is empty.
@@ -1495,7 +1495,7 @@ public:
    *
    * @param[in] cmp   Reference to a compare function.
    */
-  dlodlist(cmp_f& cmp = default_cmp);
+  dlodlist(cmp_f& cmp = _defaultCmp);
 
   /**
    * @brief   Checks whether the dlodlist is empty.
